@@ -41,6 +41,33 @@
     <Reference Include="curve25519">
       <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\curve25519.dll</HintPath>
     </Reference>
+    <Reference Include="Google.ProtocolBuffers">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\Google.ProtocolBuffers.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.ProtocolBuffers.Serialization">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\Google.ProtocolBuffers.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="May">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\May.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLCrypto">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\PCLCrypto.dll</HintPath>
+    </Reference>
+    <Reference Include="PInvoke.BCrypt">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\PInvoke.BCrypt.dll</HintPath>
+    </Reference>
+    <Reference Include="PInvoke.Kernel32">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\PInvoke.Kernel32.dll</HintPath>
+    </Reference>
+    <Reference Include="PInvoke.NCrypt">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\PInvoke.NCrypt.dll</HintPath>
+    </Reference>
+    <Reference Include="PInvoke.Windows.Core">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\PInvoke.Windows.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Validation">
+      <HintPath>..\..\..\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\bin\Debug\Validation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
