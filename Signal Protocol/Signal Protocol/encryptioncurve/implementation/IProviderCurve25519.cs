@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Signal_Protocol.encryptioncurve.implementation
+{
+    /// <summary>
+    /// Interface to restrict the exposure of elliptical curve 25519 implementation
+    /// </summary>
+    interface IProviderCurve25519
+    {
+        byte[] calculateAgreement(byte[] ourPrivate, byte[] theirPublic);
+        byte[] calculateSignature(byte[] random, byte[] privateKey, byte[] message);
+        byte[] generatePrivateKey(byte[] random);
+        byte[] generatePublicKey(byte[] privateKey);
+        bool isNative();
+        bool verifySignature(byte[] publicKey, byte[] message, byte[] signature);
+    }
+}

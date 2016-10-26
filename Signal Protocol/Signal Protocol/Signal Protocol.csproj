@@ -35,6 +35,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="encryptioncurve\Curve.cs" />
+    <Compile Include="encryptioncurve\implementation\IProviderCurve25519.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
