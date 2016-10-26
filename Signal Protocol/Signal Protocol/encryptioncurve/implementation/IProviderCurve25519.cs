@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Signal_Protocol.encryptioncurve.implementation
+﻿namespace Signal_Protocol.encryptioncurve.implementation
 {
     /// <summary>
     /// Interface to restrict the exposure of elliptical curve 25519 implementation
