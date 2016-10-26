@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signal_Protocol.encryptioncurve.implementation
 {
     class NativeProviderForCurve25519 : IProviderCurve25519
     {
-        private curve25519.Curve25519Native native = new curve25519.Curve25519Native();
 
         public byte[] calculateAgreement(byte[] ourPrivate, byte[] theirPublic)
         {
