@@ -1,7 +1,7 @@
 ﻿using org.whispersystems.curve25519;
 namespace Signal_Protocol.encryptioncurve.implementation
 {
-    class ManagedProviderForCurve25519 : IProviderCurve25519
+    class ManagedProviderForCurve25519 : IProviderForCurve25519
     {
         private Curve25519 curve;
 

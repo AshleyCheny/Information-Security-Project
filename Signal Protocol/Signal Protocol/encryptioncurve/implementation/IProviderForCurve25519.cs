@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface to restrict the exposure of elliptical curve 25519 implementation
     /// </summary>
-    interface IProviderCurve25519
+    interface IProviderForCurve25519
     {
         byte[] calculateAgreement(byte[] ourPrivate, byte[] theirPublic);
         byte[] calculateSignature(byte[] random, byte[] privateKey, byte[] message);

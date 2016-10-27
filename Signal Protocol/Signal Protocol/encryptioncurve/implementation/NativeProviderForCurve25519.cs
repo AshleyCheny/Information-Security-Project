@@ -2,7 +2,7 @@
 
 namespace Signal_Protocol.encryptioncurve.implementation
 {
-    class NativeProviderForCurve25519 : IProviderCurve25519
+    class NativeProviderForCurve25519 : IProviderForCurve25519
     {
 
         public byte[] calculateAgreement(byte[] ourPrivate, byte[] theirPublic)
