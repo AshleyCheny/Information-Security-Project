@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Signal_Protocol.encryptioncurve.implementation;
+using static PCLCrypto.WinRTCrypto;
 
 namespace Signal_Protocol.encryptioncurve
 {
@@ -16,7 +13,7 @@ namespace Signal_Protocol.encryptioncurve
     class Curve25519
     {
         private static Curve25519 instance;
-        private ICurve25519Provider provider;
+        private IProviderForCurve25519 provider;
 
         private Curve25519() { }
 
@@ -34,12 +31,12 @@ namespace Signal_Protocol.encryptioncurve
                 {
                     case Curve25519ProviderType.NATIVE:
                         {
-                            instance.provider = (ICurve25519Provider)new Curve25519NativeProvider();
+                            instance.provider = new NativeProviderForCurve25519();
                             break;
                         }
                     case Curve25519ProviderType.BEST:
                         {
-                            instance.provider = (ICurve25519Provider)new Curve25519ManagedProvider(
+                            instance.provider = new ManagedProviderForCurve25519(
                                 org.whispersystems.curve25519.Curve25519.BEST);
                             break;
                         }
@@ -61,13 +58,13 @@ namespace Signal_Protocol.encryptioncurve
         /// Function to generate random Curve25519 keypair
         /// </summary>
         /// <returns></returns>
-        public Curve25519KeyPair generateKeyPair()
+        public KeyPairForCurve25519 generateKeyPair()
         {
             byte[] random = CryptographicBuffer.GenerateRandom(32);
             byte[] privateKey = provider.generatePrivateKey(random);
             byte[] publicKey = provider.generatePublicKey(privateKey);
 
-            return new Curve25519KeyPair(publicKey, privateKey);
+            return new KeyPairForCurve25519(publicKey, privateKey);
         }
 
         /// <summary>
@@ -90,13 +87,12 @@ namespace Signal_Protocol.encryptioncurve
         /// <returns></returns>
         public byte[] calculateSignature(byte[] privateKey, byte[] message)
         {
-
             byte[] random = CryptographicBuffer.GenerateRandom(64);
             return provider.calculateSignature(random, privateKey, message);
         }
 
         /// <summary>
-        /// Verifies the signature of a given message using the Curve25519 public key the message bellongs to
+        /// Verifies the signature of a given message using the Curve25519 public key the message belongs to
         /// </summary>
         /// <param name="publicKey"></param>
         /// <param name="message"></param>
