@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{08165C37-0E3A-4BA8-9837-AF4B95DA7585}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebChatApp", "WebChatApp\WebChatApp.csproj", "{7684601E-E756-445F-BE56-94A3606E6078}"
 EndProject
 Global
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{08165C37-0E3A-4BA8-9837-AF4B95DA7585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08165C37-0E3A-4BA8-9837-AF4B95DA7585}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08165C37-0E3A-4BA8-9837-AF4B95DA7585}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08165C37-0E3A-4BA8-9837-AF4B95DA7585}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7684601E-E756-445F-BE56-94A3606E6078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7684601E-E756-445F-BE56-94A3606E6078}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7684601E-E756-445F-BE56-94A3606E6078}.Release|Any CPU.ActiveCfg = Release|Any CPU
