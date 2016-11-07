@@ -50,6 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MockWebService\FakeSettings.cs" />
+    <Compile Include="MockWebService\FakeWebService.cs" />
+    <Compile Include="MockWebService\ISettings.cs" />
+    <Compile Include="MockWebService\IWebService.cs" />
     <Compile Include="Models\Conversation.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\User.cs" />
@@ -57,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
