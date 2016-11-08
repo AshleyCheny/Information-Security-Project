@@ -2,5 +2,5 @@
 <resources>
     <string name="ApplicationName">ChatApp</string>
     <string name="ErrorTitle">Oops!</string>
-    <string nam="Loading">Loading</string>
+    <string name="Loading">Loading</string>
 </resources>
