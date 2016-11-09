@@ -17,5 +17,6 @@ namespace ChatApp.Core.Models
         public int Id { get; set;}
         public int UserId { get; set; }
         public string Username { get; set; }
+        public string LastMessage { get; set; }
     }
 }
