@@ -69,6 +69,12 @@ namespace ChatApp
 			// aapt resource value: 0x7f050005
 			public const int messageText = 2131034117;
 			
+			// aapt resource value: 0x7f050008
+			public const int myMessageDate = 2131034120;
+			
+			// aapt resource value: 0x7f050007
+			public const int myMessageText = 2131034119;
+			
 			// aapt resource value: 0x7f050001
 			public const int password = 2131034113;
 			
@@ -77,6 +83,12 @@ namespace ChatApp
 			
 			// aapt resource value: 0x7f050006
 			public const int sendButton = 2131034118;
+			
+			// aapt resource value: 0x7f05000a
+			public const int theirMessageDate = 2131034122;
+			
+			// aapt resource value: 0x7f050009
+			public const int theirMessageText = 2131034121;
 			
 			// aapt resource value: 0x7f050000
 			public const int username = 2131034112;
@@ -99,6 +111,12 @@ namespace ChatApp
 			
 			// aapt resource value: 0x7f030001
 			public const int Messages = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int MyMessageListItem = 2130903042;
+			
+			// aapt resource value: 0x7f030003
+			public const int TheirMessageListItem = 2130903043;
 			
 			static Layout()
 			{

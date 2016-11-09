@@ -11,13 +11,15 @@
         android:id="@+id/messageList"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@android:color/background_light" />
     <RelativeLayout
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout1">
+        android:id="@+id/relativeLayout1"
+        android:background="@android:color/primary_text_dark">
         <EditText
             android:id="@+id/messageText"
             android:layout_width="match_parent"
