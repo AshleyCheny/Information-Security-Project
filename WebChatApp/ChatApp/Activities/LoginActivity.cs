@@ -30,6 +30,7 @@ namespace ChatApp.Activities
             username = FindViewById<EditText>(Resource.Id.username);
             password = FindViewById<EditText>(Resource.Id.password);
             login = FindViewById<Button>(Resource.Id.login);
+            // Add event to login. When the user click on the Login button, Onlogin will be called.
             login.Click += OnLogin;
         }
 
@@ -42,7 +43,7 @@ namespace ChatApp.Activities
                 password.Text = string.Empty;
         }
 
-        //
+        // Implement OnLogin method
         async void OnLogin(object sender, EventArgs e)
         {
             viewModel.Username = username.Text;
@@ -50,8 +51,9 @@ namespace ChatApp.Activities
 
             try
             {
-                await viewModel.Login();     
-                //TODO: navigate to a new activity    
+                await viewModel.Login();
+                // **TODO: navigate to a new activity  
+                StartActivity(typeof(ConversationsActivity));
             }
             catch (Exception exc)
             {

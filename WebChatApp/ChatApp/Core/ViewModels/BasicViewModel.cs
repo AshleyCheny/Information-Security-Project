@@ -15,11 +15,16 @@ namespace ChatApp.Core.ViewModels
 {
     public class BasicViewModel
     {
+        // Create an instance of IWebServices: service
+        // 
         protected readonly IWebServices service =
             ServiceContainer.Resolve<IWebServices>();
+
+        // Create an instance of ISettings: settings
         protected readonly ISettings settings =
             ServiceContainer.Resolve<ISettings>();
 
+        // Indicate that if the ViewModel layer is busy.
         public event EventHandler IsBusyChanged = delegate { };
 
         private bool isBusy = false;

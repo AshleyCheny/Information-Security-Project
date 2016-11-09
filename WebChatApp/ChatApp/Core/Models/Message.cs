@@ -12,15 +12,19 @@ using Android.Widget;
 
 namespace ChatApp.Core.Models
 {
+    // A class to store a message's infomation.
+    // A message has its Id.
+    // the ConversationId it belongs to.
+    // Who send the message: UserId and Username.
+    // The content of the message: Text.
+    // When send the message: Date.
     public class Message
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
 
-        public string ToId { get; set; }
+        public int ConversationId { get; set; }
 
-        public string ConversationId { get; set; }
-
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         public string Username { get; set; }
 

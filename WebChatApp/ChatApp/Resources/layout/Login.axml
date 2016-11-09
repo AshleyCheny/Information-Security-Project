@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <EditText
         android:text="Text"
         android:layout_width="match_parent"
-        android:layout_height="39.0dp"
-        android:id="@+id/username"
-        android:layout_marginBottom="25.0dp" />
-    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/username" />
+    <EditText
         android:text="Text"
         android:layout_width="match_parent"
-        android:layout_height="47.5dp"
+        android:layout_height="wrap_content"
         android:id="@+id/password"
         android:inputType="textPassword" />
     <Button

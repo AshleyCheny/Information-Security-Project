@@ -10,19 +10,19 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using System.Threading.Tasks;
+using ChatApp.Core.Models;
 
 namespace ChatApp.Core.ViewModels
 {
     public class MessageViewModel : BasicViewModel
     {
         public Conversation[] Conversations { get; private set; }
-
         public Conversation Conversation { get; set; }
-
-        public Message[] Messages { get; private set; }
-
+        public Models.Message[] Messages { get; private set; }
         public string Text { get; set; }
 
+
+        // Retrieve a list of conversations 
         public async Task GetConversations()
         {
             if (settings.User == null)
@@ -39,6 +39,7 @@ namespace ChatApp.Core.ViewModels
             }
         }
 
+        // Retrieve a list of messages within a conversation. 
         public async Task GetMessages()
         {
             if (Conversation == null)
@@ -55,8 +56,8 @@ namespace ChatApp.Core.ViewModels
             }
         }
 
-        public async T
-            ask SendMessage()
+        // Send a message and update the local list of messages 
+        public async Task SendMessage()
         {
             if (settings.User == null)
                 throw new Exception("Not logged in.");
@@ -70,16 +71,15 @@ namespace ChatApp.Core.ViewModels
             IsBusy = true;
             try
             {
-                var message = await service.SendMessage(new Message
+                var message = await service.SendMessage(new Models.Message
                 {
                     UserId = settings.User.Id,
-                    ToId = Conversation.UserId,
                     ConversationId = Conversation.Id,
                     Text = Text
                 });
 
                 //Update our local list of messages
-                var messages = new List<Message>();
+                var messages = new List<Models.Message>();
                 if (Messages != null)
                     messages.AddRange(Messages);
                 messages.Add(message);

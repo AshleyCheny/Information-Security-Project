@@ -13,11 +13,13 @@ using ChatApp.Core.ViewModels;
 
 namespace ChatApp.Activities
 {
+    // Implement a simple base class for all the activities throughout our app. 
     [Activity(Label = "BaseActivity")]
+    // Make this class generic
     public class BaseActivity<TViewModel> : Activity
         where TViewModel : BasicViewModel
     {
-        //
+        // Define a protected variable named viewModel to store a view model of specific type.
         protected readonly TViewModel viewModel;
         protected ProgressDialog progress;
 
@@ -53,7 +55,7 @@ namespace ChatApp.Activities
             viewModel.IsBusyChanged -= OnIsBusyChanged;
         }
 
-        //
+        // Displayed a simple ProgressBar function with the Loading string from the Strings.xml file to indicate network activity. 
         void OnIsBusyChanged(object sender, EventArgs e)
         {
             if (viewModel.IsBusy)

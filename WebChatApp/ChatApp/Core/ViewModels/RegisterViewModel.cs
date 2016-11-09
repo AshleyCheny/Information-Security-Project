@@ -14,14 +14,17 @@ using ChatApp.Core.Models;
 
 namespace ChatApp.Core.ViewModels
 {
+    // Create the RegisterViewModel for the user's registration. 
     public class RegisterViewModel : BasicViewModel
     {
+        // These three properties will handle inputs from the user. 
         public string Username { get; set; }
 
         public string Password { get; set; }
 
         public string ConfirmPassword { get; set; }
 
+        // Create the Register method.
         public async Task Register()
         {
             if (string.IsNullOrEmpty(Username))
@@ -34,6 +37,8 @@ namespace ChatApp.Core.ViewModels
                 throw new Exception("Passwords don't match.");
 
             IsBusy = true;
+
+            // Get a user's input and save them in the server's Username and Password properties.
             try
             {
                 settings.User = await service.Register(new User

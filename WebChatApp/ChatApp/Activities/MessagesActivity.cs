@@ -10,12 +10,16 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using ChatApp.Core.ViewModels;
+using ChatApp.Core.Models;
+using Message = ChatApp.Core.Models.Message;
+
 
 namespace ChatApp.Activities
 {
-    [Activity(Label = "MessagesActivity")]
+    [Activity(Label = "Username here**")]
     public class MessagesActivity : BaseActivity<MessageViewModel>
     {
+        //  This displays views vertically in a list with the help of an adapter class that determines the number of child views. It also has support for its children to be selected. 
         ListView listView;
         EditText messageText;
         Button sendButton;
@@ -67,5 +71,75 @@ namespace ChatApp.Activities
                 DisplayError(exc);
             }
         }
+
+        class Adapter : BaseAdapter<Core.Models.Message>
+        {
+            readonly MessageViewModel messageViewModel = ServiceContainer.Resolve<MessageViewModel>();
+            readonly ISettings settings = ServiceContainer.Resolve<ISettings>();
+            readonly LayoutInflater inflater;
+            const int MyMessageType = 0, TheirMessageType = 1;
+
+            public Adapter(Context context)
+            {
+                inflater = (LayoutInflater)context.GetSystemService(Context.LayoutInflaterService);
+            }
+
+            public override long GetItemId(int position)
+            {
+                return position;
+            }
+
+            public override int Count
+            {
+                get { return messageViewModel.Messages == null ? 0 : messageViewModel.Messages.Length; }
+            }
+
+            public override Message this[int index]
+            {
+                get { return messageViewModel.Messages[index]; }
+            }
+
+            public override int ViewTypeCount
+            {
+                get { return 2; }
+            }
+
+            public override int GetItemViewType(int position)
+            {
+                var message = this[position];
+                return message.UserId == settings.User.Id ? MyMessageType : TheirMessageType;
+            }
+
+            public override View GetView(int position, View convertView, ViewGroup parent)
+            {
+                var message = this[position];
+                int type = GetItemViewType(position);
+                if (convertView == null)
+                {
+                    if (type == MyMessageType)
+                    {
+                        convertView = inflater.Inflate(Resource.Layout.MyMessageListItem, null);
+                    }
+                    else
+                    {
+                        convertView = inflater.Inflate(Resource.Layout.TheirMessageListItem, null);
+                    }
+                }
+                TextView messageText, dateText;
+                if (type == MyMessageType)
+                {
+                    messageText = convertView.FindViewById<TextView>(Resource.Id.myMessageText);
+                    dateText = convertView.FindViewById<TextView>(Resource.Id.myMessageDate);
+                }
+                else
+                {
+                    messageText = convertView.FindViewById<TextView>(Resource.Id.theirMessageText);
+                    dateText = convertView.FindViewById<TextView>(Resource.Id.theirMessageDate);
+                }
+                messageText.Text = message.Text;
+                dateText.Text = message.Date.ToString("MM/dd/yy HH:mm");
+                return convertView;
+            }
+        }
     }
-    }
+}
