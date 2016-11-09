@@ -9,12 +9,13 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using ChatApp.Core.ViewModels;
 
 namespace ChatApp.Activities
 {
     [Activity(Label = "BaseActivity")]
     public class BaseActivity<TViewModel> : Activity
-        where TViewModel : BaseViewModel
+        where TViewModel : BasicViewModel
     {
         //
         protected readonly TViewModel viewModel;

@@ -52,6 +52,7 @@
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\LoginActivity.cs" />
     <Compile Include="Activities\MessagesActivity.cs" />
+    <Compile Include="Activities\RegisterActivity.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Core\Models\FakeSettings.cs" />
     <Compile Include="Core\Models\FakeWebService.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="ServiceContainer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
