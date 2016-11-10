@@ -52,8 +52,8 @@ namespace ChatApp.Core.Models
             {
                 // In this Conversation, the user will talk to user whose UserId = 2.
                 new Conversation { Id = 1, UserId = 2, Username = "bobama", LastMessage = "Hey!" },
-                new Conversation { Id = 1, UserId = 3, Username = "bobloblaw", LastMessage = "Have you seen that new movie?" },
-                new Conversation { Id = 1, UserId = 4, Username = "gmichael", LastMessage = "What?" },
+                new Conversation { Id = 2, UserId = 3, Username = "bobloblaw", LastMessage = "Have you seen that new movie?" },
+                new Conversation { Id = 3, UserId = 4, Username = "gmichael", LastMessage = "What?" },
             };
         }
 

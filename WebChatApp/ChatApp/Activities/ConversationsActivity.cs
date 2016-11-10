@@ -28,16 +28,27 @@ namespace ChatApp.Activities
             SetContentView(Resource.Layout.Conversations);
             listView = FindViewById<ListView>(Resource.Id.conversationsList);
             listView.Adapter = adapter = new Adapter(this);
+
+            // Set the click event
+            listView.ItemClick += (sender, e) =>
+            {
+                viewModel.Conversation = adapter[e.Position];
+
+                StartActivity(typeof(MessagesActivity));
+            };
         }
 
         // This code will set up the adapter and reload our list of conversations when the activity appears on screen
         protected async override void OnResume()
         {
+            // Call BaseActivity's OnResume method
             base.OnResume();
 
             try
             {
+                // Get the three Conversations created in FakeWebService
                 await viewModel.GetConversations();
+
                 adapter.NotifyDataSetInvalidated(); 
             }
             catch (Exception exc)
@@ -73,6 +84,7 @@ namespace ChatApp.Activities
             {
                 if (convertView == null)
                 {
+                    // convertView shows one conversation the the conversation list
                     convertView = inflater.Inflate(Resource.Layout.ConversationListItem, null);
                 }
 

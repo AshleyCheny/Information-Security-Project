@@ -19,7 +19,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout1"
-        android:background="@android:color/primary_text_dark">
+        android:background="@android:drawable/btn_default">
         <EditText
             android:id="@+id/messageText"
             android:layout_width="match_parent"

@@ -56,6 +56,7 @@ namespace ChatApp.Activities
             };
         }
 
+        // Next, we'll need to implement OnResume to load the messages, invalidate the adapter, and then scroll the list view to the end,
         protected async override void OnResume()
         {
             base.OnResume();
@@ -112,8 +113,12 @@ namespace ChatApp.Activities
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
+                //  First pull out the message object for the position of the row. 
                 var message = this[position];
                 int type = GetItemViewType(position);
+
+                // Next, we grab the view type that determines whether it is the current user's message or the other user in the conversation.
+                // If convertView is null, we inflate the appropriate layout based on the type. 
                 if (convertView == null)
                 {
                     if (type == MyMessageType)
@@ -125,6 +130,9 @@ namespace ChatApp.Activities
                         convertView = inflater.Inflate(Resource.Layout.TheirMessageListItem, null);
                     }
                 }
+
+                // Next, we pull the two text views, messageText and dateText, out of convertView. 
+                // We have to use the type value to make sure we use the correct resource IDs. 
                 TextView messageText, dateText;
                 if (type == MyMessageType)
                 {
@@ -136,8 +144,12 @@ namespace ChatApp.Activities
                     messageText = convertView.FindViewById<TextView>(Resource.Id.theirMessageText);
                     dateText = convertView.FindViewById<TextView>(Resource.Id.theirMessageDate);
                 }
+
+                // We set the appropriate text on both text views using the message object. 
                 messageText.Text = message.Text;
                 dateText.Text = message.Date.ToString("MM/dd/yy HH:mm");
+
+                // We return convertView. 
                 return convertView;
             }
         }
