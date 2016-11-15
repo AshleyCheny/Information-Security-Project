@@ -1,7 +1,7 @@
-﻿using Signal_Protocol.encryptioncurve.implementation;
+﻿using Signal_Protocol.ecc.implementation;
 using static PCLCrypto.WinRTCrypto;
 
-namespace Signal_Protocol.encryptioncurve
+namespace Signal_Protocol.ecc
 {
     public enum Curve25519ProviderType
     {

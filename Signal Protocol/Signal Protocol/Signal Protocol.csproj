@@ -34,13 +34,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="encryptioncurve\Curve.cs" />
-    <Compile Include="encryptioncurve\Curve25519.cs" />
-    <Compile Include="encryptioncurve\implementation\IProviderForCurve25519.cs" />
-    <Compile Include="encryptioncurve\implementation\ManagedProviderForCurve25519.cs" />
-    <Compile Include="encryptioncurve\implementation\NativeProviderForCurve25519.cs" />
+    <Compile Include="InvalidKeyException.cs" />
+    <Compile Include="ecc\Curve.cs" />
+    <Compile Include="ecc\Curve25519.cs" />
+    <Compile Include="ecc\DjbECPrivateKey.cs" />
+    <Compile Include="ecc\DjbECPublicKey.cs" />
+    <Compile Include="ecc\ECKeyPair.cs" />
+    <Compile Include="ecc\ECPrivateKey.cs" />
+    <Compile Include="ecc\ECPublicKey.cs" />
+    <Compile Include="ecc\implementation\IProviderForCurve25519.cs" />
+    <Compile Include="ecc\implementation\ManagedProviderForCurve25519.cs" />
+    <Compile Include="ecc\implementation\NativeProviderForCurve25519.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\ByteUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="curve25519">

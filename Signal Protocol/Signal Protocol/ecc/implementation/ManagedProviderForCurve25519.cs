@@ -1,9 +1,21 @@
-﻿using System;
-
-namespace Signal_Protocol.encryptioncurve.implementation
+﻿namespace Signal_Protocol.ecc.implementation
 {
-    class NativeProviderForCurve25519 : IProviderForCurve25519
+    /// <summary>
+    /// Class to handle Curve25519 for managed providers
+    /// </summary>
+    class ManagedProviderForCurve25519 : IProviderForCurve25519
     {
+        private org.whispersystems.curve25519.Curve25519 curve;
+
+        /// <summary>
+        /// Constructor for the ManagedProviderForCurve25519 class
+        /// </summary>
+        /// <param name="type"></param>
+        public ManagedProviderForCurve25519(string type)
+        {
+            curve = org.whispersystems.curve25519.Curve25519.getInstance(type);
+        }
+
         /// <summary>
         /// Calculate a ECDH 32-byte shared secret for the given public and private key
         /// </summary>
@@ -12,7 +24,7 @@ namespace Signal_Protocol.encryptioncurve.implementation
         /// <returns></returns>
         public byte[] calculateAgreement(byte[] ourPrivate, byte[] theirPublic)
         {
-            throw new NotImplementedException();
+            return curve.calculateAgreement(ourPrivate, theirPublic);
         }
 
         /// <summary>
@@ -24,7 +36,7 @@ namespace Signal_Protocol.encryptioncurve.implementation
         /// <returns></returns>
         public byte[] calculateSignature(byte[] random, byte[] privateKey, byte[] message)
         {
-            throw new NotImplementedException();
+            return curve.calculateSignature(random, privateKey, message);
         }
 
         /// <summary>
@@ -34,7 +46,7 @@ namespace Signal_Protocol.encryptioncurve.implementation
         /// <returns></returns>
         public byte[] generatePrivateKey(byte[] random)
         {
-            throw new NotImplementedException();
+            return curve.generatePrivateKey(random);
         }
 
         /// <summary>
@@ -44,7 +56,7 @@ namespace Signal_Protocol.encryptioncurve.implementation
         /// <returns></returns>
         public byte[] generatePublicKey(byte[] privateKey)
         {
-            throw new NotImplementedException();
+            return curve.generatePublicKey(privateKey);
         }
 
         /// <summary>
@@ -53,7 +65,7 @@ namespace Signal_Protocol.encryptioncurve.implementation
         /// <returns></returns>
         public bool isNative()
         {
-            throw new NotImplementedException();
+            return curve.isNative();
         }
 
         /// <summary>
@@ -65,7 +77,7 @@ namespace Signal_Protocol.encryptioncurve.implementation
         /// <returns></returns>
         public bool verifySignature(byte[] publicKey, byte[] message, byte[] signature)
         {
-            throw new NotImplementedException();
+            return curve.verifySignature(publicKey, message, signature);
         }
     }
 }

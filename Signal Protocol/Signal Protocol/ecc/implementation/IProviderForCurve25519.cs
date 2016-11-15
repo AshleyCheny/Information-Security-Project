@@ -1,4 +1,4 @@
-﻿namespace Signal_Protocol.encryptioncurve.implementation
+﻿namespace Signal_Protocol.ecc.implementation
 {
     /// <summary>
     /// Interface to restrict the exposure of elliptical curve 25519 implementation

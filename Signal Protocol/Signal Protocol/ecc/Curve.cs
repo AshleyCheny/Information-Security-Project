@@ -1,6 +1,6 @@
 ﻿using org.whispersystems.curve25519;
 
-namespace Signal_Protocol.encryptioncurve
+namespace Signal_Protocol.ecc
 {
     /// <summary>
     /// Class Curve25519 to implement functionalities related to Key generation
@@ -24,7 +24,7 @@ namespace Signal_Protocol.encryptioncurve
         /// <returns></returns>
         public static ECKeyPair generateKeyPair()
         {
-            Curve25519KeyPair keyPair = Curve25519.getInstance(Curve25519ProviderType.BEST).generateKeyPair();
+            KeyPairForCurve25519 keyPair = Curve25519.getInstance(Curve25519ProviderType.BEST).generateKeyPair();
 
             return new ECKeyPair(new DjbECPublicKey(keyPair.getPublicKey()),
                                  new DjbECPrivateKey(keyPair.getPrivateKey()));

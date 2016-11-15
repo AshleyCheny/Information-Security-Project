@@ -1,21 +1,9 @@
-﻿namespace Signal_Protocol.encryptioncurve.implementation
+﻿using System;
+
+namespace Signal_Protocol.ecc.implementation
 {
-    /// <summary>
-    /// Class to handle Curve25519 for managed providers
-    /// </summary>
-    class ManagedProviderForCurve25519 : IProviderForCurve25519
+    class NativeProviderForCurve25519 : IProviderForCurve25519
     {
-        private org.whispersystems.curve25519.Curve25519 curve;
-
-        /// <summary>
-        /// Constructor for the ManagedProviderForCurve25519 class
-        /// </summary>
-        /// <param name="type"></param>
-        public ManagedProviderForCurve25519(string type)
-        {
-            curve = org.whispersystems.curve25519.Curve25519.getInstance(type);
-        }
-
         /// <summary>
         /// Calculate a ECDH 32-byte shared secret for the given public and private key
         /// </summary>
@@ -24,7 +12,7 @@
         /// <returns></returns>
         public byte[] calculateAgreement(byte[] ourPrivate, byte[] theirPublic)
         {
-            return curve.calculateAgreement(ourPrivate, theirPublic);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -36,7 +24,7 @@
         /// <returns></returns>
         public byte[] calculateSignature(byte[] random, byte[] privateKey, byte[] message)
         {
-            return curve.calculateSignature(random, privateKey, message);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -46,7 +34,7 @@
         /// <returns></returns>
         public byte[] generatePrivateKey(byte[] random)
         {
-            return curve.generatePrivateKey(random);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -56,7 +44,7 @@
         /// <returns></returns>
         public byte[] generatePublicKey(byte[] privateKey)
         {
-            return curve.generatePublicKey(privateKey);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -65,7 +53,7 @@
         /// <returns></returns>
         public bool isNative()
         {
-            return curve.isNative();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -77,7 +65,7 @@
         /// <returns></returns>
         public bool verifySignature(byte[] publicKey, byte[] message, byte[] signature)
         {
-            return curve.verifySignature(publicKey, message, signature);
+            throw new NotImplementedException();
         }
     }
 }
