@@ -45,8 +45,14 @@
     <Compile Include="ecc\implementation\IProviderForCurve25519.cs" />
     <Compile Include="ecc\implementation\ManagedProviderForCurve25519.cs" />
     <Compile Include="ecc\implementation\NativeProviderForCurve25519.cs" />
+    <Compile Include="kdf\DerivedMessageSecrets.cs" />
+    <Compile Include="kdf\DerivedRootSecrets.cs" />
+    <Compile Include="kdf\HKDF.cs" />
+    <Compile Include="kdf\HKDFv2.cs" />
+    <Compile Include="kdf\HKDFv3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="util\ByteUtil.cs" />
+    <Compile Include="util\HMAC.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="curve25519">
