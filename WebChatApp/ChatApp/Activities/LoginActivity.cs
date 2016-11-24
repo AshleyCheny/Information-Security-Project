@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using ChatApp.Core.ViewModels;
+using System.Threading.Tasks;
 
 namespace ChatApp.Activities
 {
@@ -44,19 +45,16 @@ namespace ChatApp.Activities
         }
 
         // Implement OnLogin method
-        void OnLogin(object sender, EventArgs e)
+        async void OnLogin(object sender, EventArgs e)
         {
             viewModel.Username = username.Text;
             viewModel.Password = password.Text;
 
             try
             {
-                 int result = viewModel.Login();
-                 if(result == 1)
-                 {
+                 await viewModel.Login();
                     // **TODO: navigate to a new activity  
                     StartActivity(typeof(ConversationsActivity));
-                 }
                 
             }
             catch (Exception exc)

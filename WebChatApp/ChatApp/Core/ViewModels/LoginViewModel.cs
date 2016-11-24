@@ -31,7 +31,7 @@ namespace ChatApp.Core.ViewModels
         public int PhoneNumber { get; set; }
 
         // We implemented a Login method to be called from View, with validation on Username and Password properties.
-        public int Login()
+        public async Task Login()
         {
             if (string.IsNullOrEmpty(Username))
                 throw new Exception("Username is blank.");
@@ -51,7 +51,7 @@ namespace ChatApp.Core.ViewModels
                 //settings.Save();
                 //string Uri = "http://ycandgap.me/login.php?";
                 //WebClient webClient = new WebClient();
-
+                
                 // this is where we will send it
                 string uri = "https://ycandgap.me/login.php";
 
@@ -76,10 +76,6 @@ namespace ChatApp.Core.ViewModels
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
                 {
                     var result = streamReader.ReadToEnd();
-                    if (result == "success")
-                        return 1;
-                    else
-                        return 0;
                 }
             }
 
