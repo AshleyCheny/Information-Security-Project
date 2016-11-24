@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp", "ChatApp\ChatApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatAppCP", "ChatAppCP\ChatAppCP.csproj", "{ABA42928-34FE-42C1-B497-A80439200F69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "signal-protocol-pcl", "..\..\..\..\Downloads\libsignal-protocol-pcl-master\signal-protocol-pcl\signal-protocol-pcl.csproj", "{28969CF5-0CEC-4B94-B5CC-BDF648A66E70}"
+EndProject
+Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "chatappapi", "chatappapi\chatappapi.phpproj", "{F96926EC-DB63-4396-B611-2E1A138AA9BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,12 @@ Global
 		{ABA42928-34FE-42C1-B497-A80439200F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABA42928-34FE-42C1-B497-A80439200F69}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABA42928-34FE-42C1-B497-A80439200F69}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{28969CF5-0CEC-4B94-B5CC-BDF648A66E70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28969CF5-0CEC-4B94-B5CC-BDF648A66E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28969CF5-0CEC-4B94-B5CC-BDF648A66E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28969CF5-0CEC-4B94-B5CC-BDF648A66E70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F96926EC-DB63-4396-B611-2E1A138AA9BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F96926EC-DB63-4396-B611-2E1A138AA9BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

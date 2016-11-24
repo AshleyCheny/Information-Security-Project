@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>chatappapi</Name>
+    <ProjectGuid>f96926ec-db63-4396-b611-2e1a138aa9bc</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <AssemblyName>chatappapi</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="include\Config.php" />
+    <Compile Include="include\DbConnect.php" />
+    <Compile Include="include\DbHandler.php" />
+    <Compile Include="include\login.php" />
+    <Compile Include="include\PassHash.php" />
+    <Compile Include="libs\Slim\index.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="include\" />
+    <Folder Include="libs\" />
+    <Folder Include="libs\Slim\" />
+    <Folder Include="v1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="libs\Slim\.gitignore" />
+    <Content Include="libs\Slim\.htaccess" />
+    <Content Include="libs\Slim\.travis.yml" />
+    <Content Include="libs\Slim\composer.json" />
+    <Content Include="libs\Slim\CONTRIBUTING.md" />
+    <Content Include="libs\Slim\LICENSE" />
+    <Content Include="libs\Slim\phpunit.xml.dist" />
+    <Content Include="libs\Slim\README.markdown" />
+    <Content Include="v1\.htaccess" />
+  </ItemGroup>
+</Project>

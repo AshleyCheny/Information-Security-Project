@@ -44,16 +44,20 @@ namespace ChatApp.Activities
         }
 
         // Implement OnLogin method
-        async void OnLogin(object sender, EventArgs e)
+        void OnLogin(object sender, EventArgs e)
         {
             viewModel.Username = username.Text;
             viewModel.Password = password.Text;
 
             try
             {
-                await viewModel.Login();
-                // **TODO: navigate to a new activity  
-                StartActivity(typeof(ConversationsActivity));
+                 int result = viewModel.Login();
+                 if(result == 1)
+                 {
+                    // **TODO: navigate to a new activity  
+                    StartActivity(typeof(ConversationsActivity));
+                 }
+                
             }
             catch (Exception exc)
             {

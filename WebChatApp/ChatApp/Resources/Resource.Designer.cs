@@ -26,6 +26,10 @@ namespace ChatApp
 		
 		public static void UpdateIdValues()
 		{
+			global::PCLCrypto.Resource.String.ApplicationName = global::ChatApp.Resource.String.ApplicationName;
+			global::PCLCrypto.Resource.String.Hello = global::ChatApp.Resource.String.Hello;
+			global::PCLStorage.Resource.String.ApplicationName = global::ChatApp.Resource.String.ApplicationName;
+			global::PCLStorage.Resource.String.Hello = global::ChatApp.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -131,7 +135,10 @@ namespace ChatApp
 			public const int MyMessageListItem = 2130903044;
 			
 			// aapt resource value: 0x7f030005
-			public const int TheirMessageListItem = 2130903045;
+			public const int Register = 2130903045;
+			
+			// aapt resource value: 0x7f030006
+			public const int TheirMessageListItem = 2130903046;
 			
 			static Layout()
 			{
@@ -146,14 +153,17 @@ namespace ChatApp
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040000
-			public const int ApplicationName = 2130968576;
-			
 			// aapt resource value: 0x7f040001
-			public const int ErrorTitle = 2130968577;
+			public const int ApplicationName = 2130968577;
 			
 			// aapt resource value: 0x7f040002
-			public const int Loading = 2130968578;
+			public const int ErrorTitle = 2130968578;
+			
+			// aapt resource value: 0x7f040000
+			public const int Hello = 2130968576;
+			
+			// aapt resource value: 0x7f040003
+			public const int Loading = 2130968579;
 			
 			static String()
 			{

@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+org.eclipse.php.core.workspaceDefaultLocale=en_US
+org.eclipse.php.ui.wizards.JSsupport=true
+useAnnotationsPrefPage=true
+useQuickDiffPrefPage=true
