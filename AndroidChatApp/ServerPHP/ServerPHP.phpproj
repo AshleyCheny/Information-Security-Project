@@ -17,6 +17,7 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="api_server2.php" />
     <Compile Include="FetchUserData.php" />
     <Compile Include="index.php" />
     <Compile Include="Register.php" />
