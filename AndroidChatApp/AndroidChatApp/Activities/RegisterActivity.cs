@@ -12,6 +12,8 @@ using Android.Widget;
 using AndroidChatApp.Models;
 using System.Net;
 using System.IO;
+using System.Collections.Specialized;
+using Newtonsoft.Json;
 
 namespace AndroidChatApp.Activities
 {
@@ -49,12 +51,26 @@ namespace AndroidChatApp.Activities
         // Implement OnLogin method
         public void OnRegister(object sender, EventArgs e)
         {
-            //**get register user's username and password from the textboxes.
-            User NewRegisteredUser = new User();
-            NewRegisteredUser.Username = username.Text.ToString();
-            NewRegisteredUser.Password = password.Text.ToString();
+            //Send the login username and password to the server and get response
+            string apiUrl = "https://ycandgap.me/api_server2.php";
+            string apiMethod = "registerUser";
             
-            StartActivity(typeof(FriendsListActivity));
+            // Login_Request has two properties: username and password
+            Login_Request myLogin_Request = new Login_Request();
+            myLogin_Request.username = username.Text;
+            myLogin_Request.password = password.Text;
+
+            // make http post request
+            string response = Http.Post(apiUrl, new NameValueCollection()
+            {
+                { "api_method", apiMethod                                    },
+                { "api_data",   JsonConvert.SerializeObject(myLogin_Request) }
+            });
+
+            // decode json string to dto object
+            API_Response r = JsonConvert.DeserializeObject<API_Response>(response);
+
+            StartActivity(typeof(ConversationActivity));
 
           
         }

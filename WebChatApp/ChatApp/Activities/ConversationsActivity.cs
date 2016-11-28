@@ -58,6 +58,8 @@ namespace ChatApp.Activities
         }
 
         // Create a subclasse of BaseAdapter<Conversation>: Adapter
+        //Connect database and UI
+        // adapter holds data from database and send the data to dapter view
         class Adapter : BaseAdapter<Conversation>
         {
             readonly MessageViewModel messageViewModel = ServiceContainer.Resolve<MessageViewModel>();

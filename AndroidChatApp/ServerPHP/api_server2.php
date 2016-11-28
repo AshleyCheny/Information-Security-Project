@@ -26,13 +26,16 @@ function API_Response($isError, $errorMessage, $responseData = '')
     )));
 }
 
-function API_Response1($isError, $errorMessage, $UserName = '', $UserPassword = '')
+function API_Response1($isError, $errorMessage, $conversationID, $senderRegisID, $receiverReigsID, $senderName, $lastMessage)
 {
     exit(json_encode(array(
         'IsError' => $isError,
         'ErrorMessage' => $errorMessage,
-        'UserName' => $UserName,
-        'UserPassword' => $UserPassword
+        'ConversationID' => $conversationID,
+        'SenderRegisID' => $senderRegisID,
+        'ReceiverReigsID' => $receiverReigsID,
+        'SenderName' => $senderName,
+        'LastMessage' => $lastMessage
     )));
 }
 
@@ -54,19 +57,49 @@ function loginUser($api_data)
     mysql_select_db("ChatAppDB");
 
     //operate query and save the results in the variable $sql
-    $sql = "SELECT `Username`,`Password` FROM `User` WHERE `Username` = '$LoginUsername' AND `Password` = '$LoginPassword'";
+    $sql = "SELECT `RegistrationID` FROM `User` WHERE `Username` = '$LoginUsername' AND `Password` = '$LoginPassword'";
     $result = mysql_query($sql);
-    $usernameandpassword = mysql_fetch_array($result);
+    $userRegistrationID = mysql_fetch_array($result);
+    $regisID = $userRegistrationID['RegistrationID'];
     // Dummy Check
-    if ($usernameandpassword!=null)
+    if ($userRegistrationID!=null)
     {
         // Success
-        API_Response(false, '', 'SUCCESS');
+        API_Response(false, '', $regisID);
     }
     else
     {
         // Error
         API_Response(true, 'Invalid username and/or password or a new user?');
+    }
+}
+
+function getConversations($api_data1)
+{
+    // Decode Login Data
+    $login_data1 = json_decode($api_data1);
+    $LoginRegisID = $login_data1->userRegisterID;
+
+    $link=mysql_connect('localhost','root','Baobao2$');
+
+    if (!$link)
+        die('Could not connect to MySQL: ' . mysql_error());
+
+    //select our project's database
+    mysql_select_db("ChatAppDB");
+
+    //operate query and save the results in the variable $sql
+    $sql = "SELECT * FROM `Conversation` WHERE `ReceiverRegisID`='$LoginRegisID'";
+    $result = mysql_query($sql);
+    //$conversation = mysql_fetch_array($result);
+    while($row = mysql_fetch_array($result,MYSQL_ASSOC))
+    {
+        $conversationID = $row['ConversationID'];
+        $senderRegisID = $row['SenderRegisID'];
+        $receiverReigsID = $row['ReceiverRegisID'];
+        $senderName = $row['SenderName'];
+        $lastMessage = $row['LastMessage'];
+        API_Response1(false, '', $conversationID, $senderRegisID, $receiverReigsID, $senderName, $lastMessage);
     }
 }
 

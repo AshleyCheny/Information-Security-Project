@@ -14,17 +14,18 @@ namespace AndroidChatApp.Activities
 {
     //**use friend name as Label in this ChatList page
     [Activity(Label = "ChatListActivity")]
-    public class ChatListActivity : Activity
+    public class MessagesActivity : Activity
     {
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             // Set our view from the "ChatList" layout resource
-            SetContentView(Resource.Layout.ChatList);
+            SetContentView(Resource.Layout.Message);
 
             // **implement messages sending and receiving here
            
         }
+
     }
 }

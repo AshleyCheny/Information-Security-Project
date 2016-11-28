@@ -64,6 +64,7 @@ namespace AndroidChatApp.Activities
             string apiUrl = "https://ycandgap.me/api_server2.php";
             string apiMethod = "loginUser";
 
+            //Login_Request has two properties:username and password
             Login_Request myLogin_Request = new Login_Request();
             myLogin_Request.username = username.Text;
             myLogin_Request.password = password.Text;
@@ -79,10 +80,12 @@ namespace AndroidChatApp.Activities
             API_Response r = JsonConvert.DeserializeObject<API_Response>(response);
 
             // check response
-            if (!r.IsError && r.ResponseData == "SUCCESS")
+            if (!r.IsError && r.ResponseData!=null)
             {
-                //if login successfully, go to FriendsList page
-                StartActivity(typeof(FriendsListActivity));
+                //**if login successfully, go to FriendsList page with the username
+                var conversationActivity = new Intent(this, typeof(ConversationActivity));
+                conversationActivity.PutExtra("UserRegisterID", r.ResponseData);
+                StartActivity(typeof(ConversationActivity));
             }
             else
             {
@@ -107,6 +110,7 @@ namespace AndroidChatApp.Activities
     {
         public string username { get; set; }
         public string password { get; set; }
+        public int userRegisterID { get; set; }
     }
 
     public static class Http
