@@ -11,7 +11,13 @@ if (empty($api_method) || empty($api_data)) {
 if (!function_exists($api_method)) {
     API_Response(true, 'API Method Not Implemented');
 }
+$link=mysql_connect('localhost','root','Baobao2$');
 
+    if (!$link)
+        die('Could not connect to MySQL: ' . mysql_error());
+
+    //select our project's database
+    mysql_select_db("ChatAppDB");
 // Call API Method
 call_user_func($api_method, $api_data);
 
@@ -36,6 +42,19 @@ function API_Response1($isError, $errorMessage, $conversationID, $senderRegisID,
         'ReceiverReigsID' => $receiverReigsID,
         'SenderName' => $senderName,
         'LastMessage' => $lastMessage
+    )));
+}
+
+function API_Response2($isError, $errorMessage, $MessageID, $MessageSenderRegisID, $MessageReceiverRegisID, $MessageText, $MessageTimestamp)
+{
+    exit(json_encode(array(
+        'IsError' => $isError,
+        'ErrorMessage' => $errorMessage,
+        'MessageID' => $MessageID,
+        'MessageSenderRegisID' => $MessageSenderRegisID,
+        'MessageReceiverRegisID' => $MessageReceiverRegisID,
+        'MessageText' => $MessageText,
+        'MessageTimestamp' => $MessageTimestamp
     )));
 }
 
@@ -72,13 +91,41 @@ function loginUser($api_data)
         // Error
         API_Response(true, 'Invalid username and/or password or a new user?');
     }
+
+    mysql_close($link);
+}
+
+function registerUser($api_data)
+{
+    $userRegisInfo = json_decode($api_data);
+    $password = $userRegisInfo->password;
+    $username = $userRegisInfo->username;
+
+    $link=mysql_connect('localhost','root','Baobao2$');
+
+    if (!$link)
+        die('Could not connect to MySQL: ' . mysql_error());
+
+    //select our project's database
+    mysql_select_db("ChatAppDB");
+
+    $sql = "INSERT INTO `User`(`Username`, `Password`, `RegistrationID`, `IdentityKey`, `PreKey`, `SignedPreKey`) VALUES ('$username','$password','222','233','34','667')";
+
+    if(mysql_query($sql,$link)){
+        API_Response(false, '', 'SUCCESS');
+    }else{
+        API_Response(true, '', 'FAILED');
+    }
+
+    mysql_close($link);
+
 }
 
 function getConversations($api_data1)
 {
     // Decode Login Data
-    $login_data1 = json_decode($api_data1);
-    $LoginRegisID = $login_data1->userRegisterID;
+    $login_data = json_decode($api_data1);
+    $LoginRegisID = $login_data->userRegisterID;
 
     $link=mysql_connect('localhost','root','Baobao2$');
 
@@ -101,45 +148,73 @@ function getConversations($api_data1)
         $lastMessage = $row['LastMessage'];
         API_Response1(false, '', $conversationID, $senderRegisID, $receiverReigsID, $senderName, $lastMessage);
     }
+
+    mysql_close($link);
 }
 
-function retrieveUser($api_data)
+function sendMessages($api_data)
+{
+    // Decode Login Data
+    $message = json_decode($api_data);
+    $insertMessage = $message->message;
+    $messageID = $insertMessage->MessageID;
+    $messageSenderRegisID = $insertMessage->MessageSenderRegisID;
+    $messageReceiverRegisID = $insertMessage->MessageReceiverRegisID;
+    $messageText = $insertMessage->MessageText;
+    $messageTimestamp = $insertMessage->MessageTimestamp;
+
+    $link=mysql_connect('localhost','root','Baobao2$');
+
+    if (!$link)
+        die('Could not connect to MySQL: ' . mysql_error());
+
+    //select our project's database
+    mysql_select_db("ChatAppDB");
+
+    $sql = "INSERT INTO `Message`(`MessageID`,`MessageSenderRegisID`, `MessageReceiverRegisID`, `MessageText`, `MessageTimestamp`) VALUES ('$messageID','$messageSenderRegisID','$messageReceiverRegisID','$messageText','$messageTimestamp')";
+    //API_Response(false, '', $messageReceiverRegisID);
+
+    if(mysql_query($sql,$link)){
+        API_Response(false, '', 'SUCCESS');
+    }else{
+        API_Response(true, '', 'FAILED');
+    }
+
+    mysql_close($link);
+}
+
+function getMessage($api_data)
 {
     // Decode Login Data
     $login_data = json_decode($api_data);
+    $LoginRegisID = $login_data->userRegisterID;
 
-    // Dummy Check
-    if ($login_data->username == 'Ying')
+    $link=mysql_connect('localhost','root','Baobao2$');
+
+    if (!$link)
+        die('Could not connect to MySQL: ' . mysql_error());
+
+    //select our project's database
+    mysql_select_db("ChatAppDB");
+
+    //operate query and save the results in the variable $sql
+    //$sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$LoginRegisID' AND `Sent`=FALSE ORDER BY `MessageTimestamp` DESC LIMIT 1";
+    $sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$LoginRegisID' ORDER BY `MessageTimestamp` DESC";
+    $result = mysql_query($sql);
+    $sql1 = "UPDATE `Message` SET `Sent`=TRUE WHERE `MessageReceiverRegisID`='$LoginRegisID' ORDER BY `MessageTimestamp` DESC";
+    $result1 = mysql_query($sql1);
+    //$conversation = mysql_fetch_array($result);
+    while($row = mysql_fetch_array($result,MYSQL_ASSOC))
     {
-	    $link=mysql_connect('localhost','root','Baobao2$');
-
-        if (!$link)
-            die('Could not connect to MySQL: ' . mysql_error());
-
-        //select our project's database
-        mysql_select_db("ChatServerDB");
-
-        //operate query and save the results in the variable $sql
-        $sql = "SELECT `Username` FROM `User` WHERE `Username` = 'aaa'";
-        $result = mysql_query($sql);
-        mysql_fetch_array($result);
-        $username = $result;
-
-        //operate query and save the results in the variable $sql
-        $sql2 = "SELECT `Password` FROM `User` WHERE `Username` = 'aaa'";
-        $result2 = mysql_query($sql2);
-        mysql_fetch_array($result2);
-        $userpassword = $result2;
-
-        mysql_close($link);
-        // Success
-        API_Response1(false, '', $username, $userpassword);
+        $MessageID = $row['MessageID'];
+        $MessageSenderRegisID = $row['MessageSenderRegisID'];
+        $MessageReceiverRegisID = $row['MessageReceiverRegisID'];
+        $MessageText = $row['MessageText'];
+        $MessageTimestamp = $row['MessageTimestamp'];
+        API_Response2(false, '', $MessageID, $MessageSenderRegisID, $MessageReceiverRegisID, $MessageText, $MessageTimestamp);
     }
-    else
-    {
-        // Error
-        API_Response(true, 'Invalid username and/or password.');
-    }
+
+    mysql_close($link);
 }
 
 ?>

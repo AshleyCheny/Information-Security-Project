@@ -111,6 +111,7 @@ namespace AndroidChatApp.Activities
         public string username { get; set; }
         public string password { get; set; }
         public int userRegisterID { get; set; }
+        public Models.Message message { get; set; }
     }
 
     public static class Http

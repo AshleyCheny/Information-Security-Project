@@ -28,7 +28,7 @@ namespace AndroidChatApp.Activities
 
         protected override void OnCreate(Bundle bundle)
         {
-            // Get the conversations in the server
+            // Get the conversations from the server
             base.OnCreate(bundle);
             Conversations = GetConversations();
             // Set our view from the "FriendsList" layout resource
@@ -81,7 +81,7 @@ namespace AndroidChatApp.Activities
         //    }
 
         // Retrieve a list of conversations 
-        public Conversation[] GetConversations()
+        private Conversation[] GetConversations()
         {
             // send the server the user name
             // server side does the selection and return the other users' names/id and store it in a Coversation array.
@@ -93,6 +93,7 @@ namespace AndroidChatApp.Activities
             Login_Request myLogin_Request = new Login_Request();
             //get the login username from previow login page.
             myLogin_Request.userRegisterID = Intent.GetIntExtra("UserRegisterID", 2016);
+
 
             // make http post request
             string response = Http.Post(apiUrl, new NameValueCollection()
