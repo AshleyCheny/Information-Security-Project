@@ -13,6 +13,7 @@ using AndroidChatApp.Models;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
 using Newtonsoft.Json;
+using Android.Preferences;
 
 namespace AndroidChatApp.Activities
 {
@@ -92,7 +93,8 @@ namespace AndroidChatApp.Activities
             //Login_Request has two properties:username and password
             Login_Request myLogin_Request = new Login_Request();
             //get the login username from previow login page.
-            myLogin_Request.userRegisterID = Intent.GetIntExtra("UserRegisterID", 2016);
+            ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+            myLogin_Request.RegistrationID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
 
 
             // make http post request
@@ -106,21 +108,29 @@ namespace AndroidChatApp.Activities
             API_Response1 r = JsonConvert.DeserializeObject<API_Response1>(response);
 
             // check response
-            if (!r.IsError)
+            if (r != null)
             {
-                return Conversations = new Conversation[] {new Conversation { ConversationID=r.ConversationID, FriendName=r.SenderName,
-                        FriendRegisID =r.ReceiverReigsID, LastMessage = r.LastMessage, SenderRegisID = r.SenderRegisID} };
+                if (!r.IsError)
+                {
+                    MessagesActivity m = new MessagesActivity();
+                    string lastmessage = (m.GetMessages(sharedPref) != null) ? m.GetMessages(sharedPref).FirstOrDefault().MessageText : string.Empty;
+                    return Conversations = new Conversation[] {new Conversation { ConversationID=r.ConversationID, FriendName=r.SenderName,
+                        FriendRegisID =r.ReceiverReigsID, LastMessage = lastmessage, SenderRegisID = r.SenderRegisID} };
+                }
+                else
+                {
+                    //if login fails, pop up an alert message. Wrong username or password or a new user
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                    dialogBuilder.SetMessage(r.ErrorMessage);
+                    //dialogBuilder.SetPositiveButton("Ok", null);
+                    dialogBuilder.Show();
+                    return null;
+                }
             }
             else
             {
-                //if login fails, pop up an alert message. Wrong username or password or a new user
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-                dialogBuilder.SetMessage(r.ErrorMessage);
-                //dialogBuilder.SetPositiveButton("Ok", null);
-                dialogBuilder.Show();
                 return null;
             }
-
         }
         // Create a subclasse of BaseAdapter<Conversation>: Adapter
         //Connect database and UI
@@ -180,8 +190,8 @@ namespace AndroidChatApp.Activities
         public bool IsError { get; set; }
         public string ErrorMessage { get; set; }
         public int ConversationID { get; set; }
-        public int SenderRegisID { get; set; }
-        public int ReceiverReigsID { get; set; }
+        public uint SenderRegisID { get; set; }
+        public uint ReceiverReigsID { get; set; }
         public string SenderName { get; set; }
         public string LastMessage { get; set; }
     }

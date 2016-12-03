@@ -15,8 +15,8 @@ namespace AndroidChatApp.Models
     public class Message
     {
         public int MessageID { get; set; }
-        public int MessageSenderRegisID { get; set; }
-        public int MessageReceiverRegisID { get; set; }
+        public uint MessageSenderRegisID { get; set; }
+        public uint MessageReceiverRegisID { get; set; }
         public string MessageText { get; set; }
         public DateTime MessageTimestamp { get; set; }
     }

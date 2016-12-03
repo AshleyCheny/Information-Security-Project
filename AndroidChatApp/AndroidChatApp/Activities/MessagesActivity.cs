@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using Newtonsoft.Json;
 using AndroidChatApp.Models;
 using System.Threading;
+using Android.Preferences;
 
 namespace AndroidChatApp.Activities
 {
@@ -28,13 +29,14 @@ namespace AndroidChatApp.Activities
         EditText messageText;
         Button sendButton;
         Adapter adapter;
-        int UserID;
+        uint UserID;
 
         protected override void OnCreate(Bundle bundle)
         {
+            ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
             // Get the messages from the server
             base.OnCreate(bundle);
-            TheirMessages = GetMessages();
+            TheirMessages = GetMessages(sharedPref);
             // Set our view from the "ChatList" layout resource
             Title = "Gaurav";
             SetContentView(Resource.Layout.Message);
@@ -51,8 +53,8 @@ namespace AndroidChatApp.Activities
             {
                 Models.Message message = new Models.Message();
                 message.MessageID = 4;
-                message.MessageReceiverRegisID = 2016;
-                message.MessageSenderRegisID = 2016;
+                message.MessageReceiverRegisID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
+                message.MessageSenderRegisID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
                 message.MessageText = messageText.Text;
                 message.MessageTimestamp = DateTime.Now;
 
@@ -64,25 +66,25 @@ namespace AndroidChatApp.Activities
 
             };
 
-            new Thread(delegate () {
-                RefreshMessagesAsync();
-            }).Start();            
+            //new Thread(delegate () {
+            //    RefreshMessagesAsync();
+            //}).Start();            
         }
 
-        private void RefreshMessagesAsync()
-        {
-            while (true)
-            {
-                Thread.Sleep(5000);
-                TheirMessages = GetMessages();
-                //if (TheirMessages != null)
-                //{
-                //    adapter.NotifyDataSetChanged();
-                //}
-            }
-        }
+        //private void RefreshMessagesAsync()
+        //{
+        //    while (true)
+        //    {
+        //        Thread.Sleep(5000);
+        //        TheirMessages = GetMessages(sharedPref);
+        //        //if (TheirMessages != null)
+        //        //{
+        //        //    adapter.NotifyDataSetChanged();
+        //        //}
+        //    }
+        //}
 
-        private Models.Message[] GetMessages()
+        public Models.Message[] GetMessages(ISharedPreferences sharedPref)
         {
             // send the server the user name
             // server side does the selection and return the messages and store it in a message array.
@@ -93,8 +95,8 @@ namespace AndroidChatApp.Activities
             //Login_Request has two properties:username and password
             Login_Request myLogin_Request = new Login_Request();
             //get the login username from previow login page.
-            myLogin_Request.userRegisterID = Intent.GetIntExtra("UserRegisterID", 2016);
-            UserID = myLogin_Request.userRegisterID;
+            myLogin_Request.RegistrationID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
+            UserID = myLogin_Request.RegistrationID;
 
 
             // make http post request
@@ -174,12 +176,12 @@ namespace AndroidChatApp.Activities
             Models.Message[] theirMessages;
             Activity context;
             const int MyMessageType = 0, TheirMessageType = 1;
-            int UserID;
+            uint UserID;
             //readonly LayoutInflater inflater;
 
             // We passed in a Context parameter (our activity) so that we can pull out the LayoutInflater. 
             // This class enables us to load XML layout resources and inflate them into a view object.
-            public Adapter(Activity context, Models.Message[] theirMessages, int userID) : base()
+            public Adapter(Activity context, Models.Message[] theirMessages, uint userID) : base()
             {
                 this.context = context;
                 this.theirMessages = theirMessages;
@@ -271,8 +273,8 @@ namespace AndroidChatApp.Activities
         public bool IsError { get; set; }
         public string ErrorMessage { get; set; }
         public int MessageID { get; set; }
-        public int MessageSenderRegisID { get; set; }
-        public int MessageReceiverRegisID { get; set; }
+        public uint MessageSenderRegisID { get; set; }
+        public uint MessageReceiverRegisID { get; set; }
         public string MessageText { get; set; }
         public DateTime MessageTimestamp { get; set; }
         public bool Sent { get; set; }

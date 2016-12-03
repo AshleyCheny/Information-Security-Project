@@ -96,6 +96,10 @@
     <Compile Include="Activities\MessagesActivity.cs" />
     <Compile Include="Activities\ConversationsActivity.cs" />
     <Compile Include="Activities\LoginActivity.cs" />
+    <Compile Include="Stores\MyIdentityKeyStore.cs" />
+    <Compile Include="Stores\MyPreKeyStore.cs" />
+    <Compile Include="Stores\MySessionStore.cs" />
+    <Compile Include="Stores\MySignedPreKeyStore.cs" />
     <Compile Include="Activities\RegisterActivity.cs" />
     <Compile Include="Models\Conversation.cs" />
     <Compile Include="Models\Message.cs" />
@@ -140,7 +144,12 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Google Drive\[1]CSULB Courses\[3][Elective]CECS579 Information Security\Group Project\libsignal-protocol-pcl-master\libsignal-protocol-pcl-master\signal-protocol-pcl\signal-protocol-pcl.csproj">
+      <Project>{28969cf5-0cec-4b94-b5cc-bdf648a66e70}</Project>
+      <Name>signal-protocol-pcl</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
      Other similar extension points exist, see Microsoft.Common.targets.

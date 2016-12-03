@@ -13,6 +13,7 @@ using AndroidChatApp.Models;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.Net;
+using Android.Preferences;
 
 namespace AndroidChatApp.Activities
 {
@@ -60,14 +61,33 @@ namespace AndroidChatApp.Activities
         // else pop up an error message in this Login page
         public void OnLogin(object sender, EventArgs e)
         {
+            ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+            string Username = sharedPref.GetString("Username", string.Empty);
+            int Password = sharedPref.GetInt("Password", int.MinValue);
+
+            if (username.Text == Username && password.Text.GetHashCode() == Password)
+            {
+                //**if login successfully, go to FriendsList page with the username
+                var conversationActivity = new Intent(this, typeof(ConversationActivity));
+                conversationActivity.PutExtra("UserRegisterID", sharedPref.GetString("RegistrationId", string.Empty));
+                StartActivity(typeof(ConversationActivity));
+            }
+            else
+            {
+                PreviousLoginActivity();
+            }
+        }
+
+        private void PreviousLoginActivity()
+        {
             //Send the login username and password to the server and get response
             string apiUrl = "https://ycandgap.me/api_server2.php";
             string apiMethod = "loginUser";
 
             //Login_Request has two properties:username and password
             Login_Request myLogin_Request = new Login_Request();
-            myLogin_Request.username = username.Text;
-            myLogin_Request.password = password.Text;
+            myLogin_Request.Username = username.Text;
+            myLogin_Request.Password = password.Text.GetHashCode();
 
             // make http post request
             string response = Http.Post(apiUrl, new NameValueCollection()
@@ -80,7 +100,7 @@ namespace AndroidChatApp.Activities
             API_Response r = JsonConvert.DeserializeObject<API_Response>(response);
 
             // check response
-            if (!r.IsError && r.ResponseData!=null)
+            if (!r.IsError && r.ResponseData != null)
             {
                 //**if login successfully, go to FriendsList page with the username
                 var conversationActivity = new Intent(this, typeof(ConversationActivity));
@@ -108,9 +128,11 @@ namespace AndroidChatApp.Activities
 
     public class Login_Request
     {
-        public string username { get; set; }
-        public string password { get; set; }
-        public int userRegisterID { get; set; }
+        public string Username { get; set; }
+        public int Password { get; set; }
+        public uint RegistrationID { get; set; }
+        public string PublicIdentityKey { get; set; }
+        public string PublicSignedPreKey { get; set; }
         public Models.Message message { get; set; }
     }
 

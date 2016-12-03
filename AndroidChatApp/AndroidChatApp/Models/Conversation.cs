@@ -16,8 +16,8 @@ namespace AndroidChatApp.Models
     {
         // In the FriendList page, there will be a friend list.
         public int ConversationID { get; set; }
-        public int SenderRegisID { get; set; }
-        public int FriendRegisID { get; set; }
+        public uint SenderRegisID { get; set; }
+        public uint FriendRegisID { get; set; }
         public string FriendName { get; set; }
         public string LastMessage { get; set; }
 
