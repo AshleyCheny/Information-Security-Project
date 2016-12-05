@@ -32,12 +32,15 @@ function API_Response($isError, $errorMessage, $responseData = '')
     )));
 }
 
-function API_Response1($isError, $errorMessage, $new_array)
+function API_Response1($isError, $errorMessage, $conversationID, $senderRegisID, $receiverReigsID, $senderName)
 {
     exit(json_encode(array(
         'IsError' => $isError,
         'ErrorMessage' => $errorMessage,
-        'Array' => $new_array
+        'ConversationID' => $conversationID,
+        'SenderRegisID' => $senderRegisID,
+        'ReceiverReigsID' => $receiverReigsID,
+        'SenderName' => $senderName
     )));
 }
 
@@ -51,16 +54,6 @@ function API_Response2($isError, $errorMessage, $MessageID, $MessageSenderRegisI
         'MessageReceiverRegisID' => $MessageReceiverRegisID,
         'MessageText' => $MessageText,
         'MessageTimestamp' => $MessageTimestamp
-    )));
-}
-
-function API_Response3($isError, $errorMessage, $PreKeyID = '', $Prekey)
-{
-    exit(json_encode(array(
-        'IsError' => $isError,
-        'ErrorMessage' => $errorMessage,
-        'PreKeyID' => $PreKeyID,
-        'Prekey' => $Prekey
     )));
 }
 
@@ -108,8 +101,6 @@ function registerUser($api_data)
     $username = $userRegisInfo->Username;
     $registrationID = $userRegisInfo->RegistrationID;
     $publicIdentityKey = $userRegisInfo->PublicIdentityKey;
-    $publicSignedPreKeyID = $userRegisInfo->PublicSignedPreKeyID;
-    $publicSignedPreKeySignature = $userRegisInfo->PublicSignedPreKeySignature;
     $publicSignedPreKey = $userRegisInfo->PublicSignedPreKey;
 
     $link=mysql_connect('localhost','root','Baobao2$');
@@ -120,7 +111,7 @@ function registerUser($api_data)
     //select our project's database
     mysql_select_db("ChatAppDB");
 
-    $sql = "INSERT INTO `User`(`Username`, `Password`, `RegistrationID`, `IdentityKey`, `SignedPreKeyID`, `SignedPreKeySignature`, `SignedPreKey`) VALUES ('$username','$password','$registrationID','$publicIdentityKey','$publicSignedPreKeyID','$publicSignedPreKeySignature','$publicSignedPreKey')";
+    $sql = "INSERT INTO `User`(`Username`, `Password`, `RegistrationID`, `IdentityKey`, `SignedPreKey`) VALUES ('$username','$password','$registrationID','$publicIdentityKey','$publicSignedPreKey')";
 
     if(mysql_query($sql,$link)){
         API_Response(false, '', 'SUCCESS');
@@ -135,8 +126,7 @@ function registerUser($api_data)
 function storePreKeys($api_data)
 {
     $preKeyInfo = json_decode($api_data);
-    $publicSignedPreKeyID = $preKeyInfo->PublicSignedPreKeyID;
-    $publicPreKeyID = $preKeyInfo->PublicPreKeyID;
+    $publicSignedPreKey = $preKeyInfo->PublicSignedPreKey;
     $publicPreKey = $preKeyInfo->PublicPreKey;
 
     $link=mysql_connect('localhost','root','Baobao2$');
@@ -147,7 +137,7 @@ function storePreKeys($api_data)
     //select our project's database
     mysql_select_db("ChatAppDB");
 
-    $sql = "INSERT INTO `Prekeys`(`SignedPreKeyID`, `PrekeyID`, `Prekey`) VALUES ('$publicSignedPreKeyID','$publicPreKeyID','$publicPreKey')";
+    $sql = "INSERT INTO `Prekeys`(`SignedPreKey`, `Prekey`) VALUES ('$publicSignedPreKey','$publicPreKey')";
 
     if(mysql_query($sql,$link)){
         API_Response(false, '', 'SUCCESS');
@@ -159,7 +149,7 @@ function storePreKeys($api_data)
 
 }
 
-function getFriends($api_data1)
+function getConversations($api_data1)
 {
     // Decode Login Data
     $login_data = json_decode($api_data1);
@@ -174,14 +164,17 @@ function getFriends($api_data1)
     mysql_select_db("ChatAppDB");
 
     //operate query and save the results in the variable $sql
-    $sql = "SELECT * FROM `User` WHERE NOT `RegistrationID`='$LoginRegisID'";
+    $sql = "SELECT * FROM `Conversation` WHERE `ReceiverRegisID`='$LoginRegisID'";
     $result = mysql_query($sql);
     //$conversation = mysql_fetch_array($result);
     while($row = mysql_fetch_array($result,MYSQL_ASSOC))
     {
-        $new_array[] = $row;
+        $conversationID = $row['ConversationID'];
+        $senderRegisID = $row['SenderRegisID'];
+        $receiverReigsID = $row['ReceiverRegisID'];
+        $senderName = $row['SenderName'];
+        API_Response1(false, '', $conversationID, $senderRegisID, $receiverReigsID, $senderName);
     }
-    API_Response1(false, '', $new_array);
 
     mysql_close($link);
 }
@@ -220,10 +213,8 @@ function sendMessages($api_data)
 function getMessage($api_data)
 {
     // Decode Login Data
-    $message = json_decode($api_data);
-    $insertMessage = $message->message;
-    $messageSenderRegisID = $insertMessage->MessageSenderRegisID;
-    $messageReceiverRegisID = $insertMessage->MessageReceiverRegisID;
+    $login_data = json_decode($api_data);
+    $LoginRegisID = $login_data->RegistrationID;
 
     $link=mysql_connect('localhost','root','Baobao2$');
 
@@ -235,9 +226,9 @@ function getMessage($api_data)
 
     //operate query and save the results in the variable $sql
     //$sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$LoginRegisID' AND `Sent`=FALSE ORDER BY `MessageTimestamp` DESC LIMIT 1";
-    $sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$messageReceiverRegisID' AND `MessageSenderRegisID`='$messageSenderRegisID' ORDER BY `MessageTimestamp` DESC";
+    $sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$LoginRegisID' ORDER BY `MessageTimestamp` DESC";
     $result = mysql_query($sql);
-    $sql1 = "UPDATE `Message` SET `Sent`=TRUE WHERE `MessageReceiverRegisID`='$messageReceiverRegisID' ORDER BY `MessageTimestamp` DESC";
+    $sql1 = "UPDATE `Message` SET `Sent`=TRUE WHERE `MessageReceiverRegisID`='$LoginRegisID' ORDER BY `MessageTimestamp` DESC";
     mysql_query($sql1);
     //$conversation = mysql_fetch_array($result);
     while($row = mysql_fetch_array($result,MYSQL_ASSOC))
@@ -248,42 +239,6 @@ function getMessage($api_data)
         $MessageText = $row['MessageText'];
         $MessageTimestamp = $row['MessageTimestamp'];
         API_Response2(false, '', $MessageID, $MessageSenderRegisID, $MessageReceiverRegisID, $MessageText, $MessageTimestamp);
-    }
-
-    mysql_close($link);
-}
-
-function getPreKey($api_data)
-{
-    // Decode Login Data
-    $PreKey_data = json_decode($api_data);
-    $PublicSignedPreKeyID = $PreKey_data->PublicSignedPreKeyID;
-
-    $link=mysql_connect('localhost','root','Baobao2$');
-
-    if (!$link)
-        die('Could not connect to MySQL: ' . mysql_error());
-
-    //select our project's database
-    mysql_select_db("ChatAppDB");
-
-    //operate query and save the results in the variable $sql
-    $sql = "SELECT `PreKeyID`,`Prekey` FROM `Prekeys` WHERE `SignedPreKeyID` = '$PublicSignedPreKeyID' LIMIT 1";
-    $result = mysql_query($sql);
-    $sql1 = "DELETE FROM `Prekeys` WHERE `PreKeyID`='$result->PreKeyID'";
-    mysql_query($sql1);
-    if ($result!=null)
-    {
-        $preKeys = mysql_fetch_array($result);
-        $PreKeyID = $preKeys['PreKeyID'];
-        $Prekey = $preKeys['Prekey'];
-        // Success
-        API_Response3(false, '', $PreKeyID, $Prekey);
-    }
-    else
-    {
-        // Error
-        API_Response3(true, 'No Prekeys left in database');
     }
 
     mysql_close($link);

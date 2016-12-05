@@ -29,10 +29,10 @@ namespace AndroidChatApp.Models
             ISharedPreferencesEditor spEditor = userLocalDatabase.Edit();
             spEditor.PutString("Username", user.Username);
             spEditor.PutString("Password", user.Password);
-            spEditor.PutInt("RegistrationID", user.RegisterationID);
+            spEditor.PutString("RegistrationID", user.RegisterationID.ToString());
             spEditor.PutString("IdentityKey", user.IdentityKey);
             spEditor.PutString("PreKeys", user.PreKeys);
-            spEditor.PutString("SignedPreKeys",user.SignedPreKeys);
+            spEditor.PutString("SignedPreKeys",user.SignedPreKey);
             spEditor.PutString("PrivateKey", user.PrivateKey);
             spEditor.Commit();
         }
@@ -43,13 +43,13 @@ namespace AndroidChatApp.Models
         {
             User StoredUser = new User();
 
-            StoredUser.Username = userLocalDatabase.GetString("Username", "ashley");
-            StoredUser.Password = userLocalDatabase.GetString("Password", "");
-            StoredUser.RegisterationID = userLocalDatabase.GetInt("RegistrationID", -1);
-            StoredUser.IdentityKey = userLocalDatabase.GetString("IdentityKey", "");
-            StoredUser.PreKeys = userLocalDatabase.GetString("PreKeys", "");
-            StoredUser.SignedPreKeys = userLocalDatabase.GetString("SignedPreKeys", "");
-            StoredUser.PrivateKey = userLocalDatabase.GetString("PrivateKey", "");
+            StoredUser.Username = userLocalDatabase.GetString("Username", string.Empty);
+            StoredUser.Password = userLocalDatabase.GetString("Password", string.Empty);
+            StoredUser.RegisterationID = Convert.ToUInt32(userLocalDatabase.GetString("RegistrationID", string.Empty));
+            StoredUser.IdentityKey = userLocalDatabase.GetString("IdentityKey", string.Empty);
+            StoredUser.PreKeys = userLocalDatabase.GetString("PreKeys", string.Empty);
+            StoredUser.SignedPreKey = userLocalDatabase.GetString("SignedPreKeys", string.Empty);
+            StoredUser.PrivateKey = userLocalDatabase.GetString("PrivateKey", string.Empty);
 
             return StoredUser;
 

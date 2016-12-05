@@ -68,9 +68,9 @@ namespace AndroidChatApp.Activities
             if (username.Text == Username && password.Text.GetHashCode() == Password)
             {
                 //**if login successfully, go to FriendsList page with the username
-                var conversationActivity = new Intent(this, typeof(ConversationActivity));
-                conversationActivity.PutExtra("UserRegisterID", sharedPref.GetString("RegistrationId", string.Empty));
-                StartActivity(typeof(ConversationActivity));
+                var friendsActivity = new Intent(this, typeof(FriendsActivity));
+                friendsActivity.PutExtra("UserRegisterID", sharedPref.GetString("RegistrationId", string.Empty));
+                StartActivity(typeof(FriendsActivity));
             }
             else
             {
@@ -103,9 +103,13 @@ namespace AndroidChatApp.Activities
             if (!r.IsError && r.ResponseData != null)
             {
                 //**if login successfully, go to FriendsList page with the username
-                var conversationActivity = new Intent(this, typeof(ConversationActivity));
-                conversationActivity.PutExtra("UserRegisterID", r.ResponseData);
-                StartActivity(typeof(ConversationActivity));
+                ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                ISharedPreferencesEditor editor = sharedPref.Edit();
+                editor.PutString("RegistrationId", r.ResponseData);
+                editor.Apply();
+                var friendsActivity = new Intent(this, typeof(FriendsActivity));
+                friendsActivity.PutExtra("UserRegisterID", r.ResponseData);
+                StartActivity(typeof(FriendsActivity));
             }
             else
             {
@@ -131,9 +135,12 @@ namespace AndroidChatApp.Activities
         public string Username { get; set; }
         public int Password { get; set; }
         public uint RegistrationID { get; set; }
+        public uint PublicIdentityKeyID { get; set; }
         public string PublicIdentityKey { get; set; }
+        public uint PublicSignedPreKeyID { get; set; }
         public string PublicSignedPreKey { get; set; }
         public Models.Message message { get; set; }
+        public string PublicSignedPreKeySignature { get; set; }
     }
 
     public static class Http

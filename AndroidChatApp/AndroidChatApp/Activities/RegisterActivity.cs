@@ -60,27 +60,47 @@ namespace AndroidChatApp.Activities
             IdentityKeyPair identityKeyPair = KeyHelper.generateIdentityKeyPair();
             uint registrationId = KeyHelper.generateRegistrationId(false);
             List<PreKeyRecord> preKeys = KeyHelper.generatePreKeys(registrationId, 100).ToList();
-            SignedPreKeyRecord signedPreKey = KeyHelper.generateSignedPreKey(identityKeyPair, 5);
+            Random random = new Random();
+            SignedPreKeyRecord signedPreKey = KeyHelper.generateSignedPreKey(identityKeyPair, Convert.ToUInt32(random.Next()));
 
-            SessionStore sessionStore = new MySessionStore();
-            PreKeyStore preKeyStore = new MyPreKeyStore();
-            SignedPreKeyStore signedPreKeyStore = new MySignedPreKeyStore();
-            IdentityKeyStore identityStore = new MyIdentityKeyStore();
+            InMemorySessionStore SessionStore = new InMemorySessionStore();
+            //SessionStore.StoreSession(new SignalProtocolAddress("1234", 1), new SessionRecord());
+            PreKeyStore PreKeyStore = new InMemoryPreKeyStore();
+            SignedPreKeyStore SignedPreKeyStore = new InMemorySignedPreKeyStore();
+            InMemoryIdentityKeyStore IdentityStore = new InMemoryIdentityKeyStore(identityKeyPair, registrationId);
 
             // Store preKeys in PreKeyStore.
-            InMemoryPreKeyStore PreKeyStore = new InMemoryPreKeyStore();
             foreach (PreKeyRecord preKey in preKeys)
             {
                 PreKeyStore.StorePreKey(preKey.getId(), preKey);
             }
 
             // Store signed prekey in SignedPreKeyStore.
-            InMemorySignedPreKeyStore SignedPreKeyStore = new InMemorySignedPreKeyStore();
             SignedPreKeyStore.StoreSignedPreKey(signedPreKey.getId(), signedPreKey);
+
+            // Save stores in local Database
+            ISharedPreferences sharedprefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            ISharedPreferencesEditor editor = sharedprefs.Edit();
+            editor.PutString("PreKeyStore", JsonConvert.SerializeObject(PreKeyStore));
+            editor.PutString("SignedPreKeyStore", JsonConvert.SerializeObject(SignedPreKeyStore));
+            List<Session> AllSessions = SessionStore.GetAllSessions();
+            editor.PutString("AllSessions", JsonConvert.SerializeObject(AllSessions));
+            editor.PutString("SessionStore", JsonConvert.SerializeObject(SessionStore));
+            editor.PutString("IdentityStore", JsonConvert.SerializeObject(IdentityStore));
+            List<TrustedKey> AllTrustedKeys = IdentityStore.GetAllTrustedKeys();
+            editor.PutString("AllTrustedKeys", JsonConvert.SerializeObject(AllTrustedKeys));
+            editor.Apply();
+
+            //var sessionStore = JsonConvert.DeserializeObject<InMemorySessionStore>(sharedprefs.GetString("SessionStore", string.Empty));
+            //var allSessions = JsonConvert.DeserializeObject<List<Session>>(sharedprefs.GetString("AllSessions", string.Empty));
+            //foreach (Session item in allSessions)
+            //{
+            //    sessionStore.StoreSession(item.Name, item.DeviceID, item.array);
+            //}
 
             // method to regidter in database
             RequestRegister(registrationId, identityKeyPair, signedPreKey, preKeys);
-            StartActivity(typeof(ConversationActivity));
+            StartActivity(typeof(FriendsActivity));
         }
 
         private void RequestRegister(uint registrationId, IdentityKeyPair identityKeyPair, SignedPreKeyRecord signedPreKey, List<PreKeyRecord> preKeys)
@@ -94,7 +114,9 @@ namespace AndroidChatApp.Activities
             myLogin_Request.Username = username.Text;
             myLogin_Request.Password = password.Text.GetHashCode();
             myLogin_Request.RegistrationID = registrationId;
-            myLogin_Request.PublicIdentityKey = JsonConvert.SerializeObject(identityKeyPair.getPublicKey().getPublicKey().serialize());
+            myLogin_Request.PublicIdentityKey = JsonConvert.SerializeObject(identityKeyPair.getPublicKey().serialize());
+            myLogin_Request.PublicSignedPreKeyID = signedPreKey.getId();
+            myLogin_Request.PublicSignedPreKeySignature = JsonConvert.SerializeObject(signedPreKey.getSignature());
             myLogin_Request.PublicSignedPreKey = JsonConvert.SerializeObject(signedPreKey.getKeyPair().getPublicKey().serialize());
 
             // Save in local Database
@@ -103,6 +125,7 @@ namespace AndroidChatApp.Activities
 
             // Store identityKeyPair somewhere durable and safe.
             editor.PutString("IdentityKeyPair", JsonConvert.SerializeObject(identityKeyPair.serialize()));
+            editor.PutString("SignedPreKey", JsonConvert.SerializeObject(signedPreKey.serialize()));
             editor.PutString("Username", username.Text);
             editor.PutInt("Password", password.Text.GetHashCode());
 
@@ -127,7 +150,8 @@ namespace AndroidChatApp.Activities
                     foreach (PreKeyRecord preKey in preKeys)
                     {
                         Prekey_Request preKey_Request = new Prekey_Request();
-                        preKey_Request.PublicSignedPreKey = JsonConvert.SerializeObject(signedPreKey.getKeyPair().getPublicKey().serialize());
+                        preKey_Request.PublicSignedPreKeyID = signedPreKey.getId();
+                        preKey_Request.PublicPreKeyID = preKey.getId();
                         preKey_Request.PublicPreKey = JsonConvert.SerializeObject(preKey.getKeyPair().getPublicKey().serialize());
                         apiMethod = "storePreKeys";
 
@@ -152,7 +176,8 @@ namespace AndroidChatApp.Activities
 
     internal class Prekey_Request
     {
-        public string PublicSignedPreKey { get; set; }
+        public uint PublicSignedPreKeyID { get; set; }
+        public uint PublicPreKeyID { get; set; }
         public string PublicPreKey { get; set; }
     }
 }

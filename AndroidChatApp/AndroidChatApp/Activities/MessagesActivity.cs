@@ -13,6 +13,11 @@ using Newtonsoft.Json;
 using AndroidChatApp.Models;
 using System.Threading;
 using Android.Preferences;
+using libsignal;
+using libsignal.state;
+using libsignal.state.impl;
+using libsignal.ecc;
+using libsignal.protocol;
 
 namespace AndroidChatApp.Activities
 {
@@ -33,12 +38,33 @@ namespace AndroidChatApp.Activities
 
         protected override void OnCreate(Bundle bundle)
         {
+            // Getting saved data
             ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+            User SelectedFriend = JsonConvert.DeserializeObject<User>(sharedPref.GetString("SelectedFriend", string.Empty));
+            InMemorySessionStore sessionStore = JsonConvert.DeserializeObject<InMemorySessionStore>(sharedPref.GetString("SessionStore", string.Empty));
+            var allSessions = JsonConvert.DeserializeObject<List<Session>>(sharedPref.GetString("AllSessions", string.Empty));
+            foreach (Session item in allSessions)
+            {
+                sessionStore.StoreSession(item.Name, item.DeviceID, item.array);
+            }
+            PreKeyStore preKeyStore = JsonConvert.DeserializeObject<InMemoryPreKeyStore>(sharedPref.GetString("PreKeyStore", string.Empty));
+            SignedPreKeyStore signedPreKeyStore = JsonConvert.DeserializeObject<InMemorySignedPreKeyStore>(sharedPref.GetString("SignedPreKeyStore", string.Empty));
+            InMemoryIdentityKeyStore identityStore = JsonConvert.DeserializeObject<InMemoryIdentityKeyStore>(sharedPref.GetString("IdentityStore", string.Empty));
+            IdentityKeyPair KeyPair = new IdentityKeyPair(JsonConvert.DeserializeObject<byte[]>(sharedPref.GetString("IdentityKeyPair", string.Empty)));
+            uint RegistrationID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
+            identityStore.PutValues(KeyPair, RegistrationID);
+            var allTrustedKeys = JsonConvert.DeserializeObject<List<TrustedKey>>(sharedPref.GetString("AllTrustedKeys", string.Empty));
+            foreach (TrustedKey item in allTrustedKeys)
+            {
+                identityStore.SaveIdentity(item.Name, new IdentityKey(item.Identity, 0));
+            }
+            SignalProtocolAddress SelectedFriendAddress = new SignalProtocolAddress(SelectedFriend.RegisterationID.ToString(), 1);
+
             // Get the messages from the server
             base.OnCreate(bundle);
-            TheirMessages = GetMessages(sharedPref);
+            TheirMessages = GetMessages(sharedPref, SelectedFriend, sessionStore, preKeyStore, signedPreKeyStore, identityStore, SelectedFriendAddress);
             // Set our view from the "ChatList" layout resource
-            Title = "Gaurav";
+            Title = SelectedFriend.Username;
             SetContentView(Resource.Layout.Message);
             listView = FindViewById<ListView>(Resource.Id.messageList);
             //***display FriendsListItem in ListView using Adapter
@@ -51,11 +77,27 @@ namespace AndroidChatApp.Activities
 
             sendButton.Click += (sender, e) =>
             {
+                SessionCipher sessionCipher = new SessionCipher(sessionStore, preKeyStore, signedPreKeyStore, identityStore, SelectedFriendAddress);
+                CiphertextMessage cipherMessage = sessionCipher.encrypt(Encoding.UTF8.GetBytes(messageText.Text));
+
+                // Save stores in local Database
+                ISharedPreferences sharedprefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                ISharedPreferencesEditor editor = sharedprefs.Edit();
+                editor.PutString("PreKeyStore", JsonConvert.SerializeObject(preKeyStore));
+                editor.PutString("SignedPreKeyStore", JsonConvert.SerializeObject(signedPreKeyStore));
+                List<Session> AllSessions = sessionStore.GetAllSessions();
+                editor.PutString("AllSessions", JsonConvert.SerializeObject(AllSessions));
+                editor.PutString("SessionStore", JsonConvert.SerializeObject(sessionStore));
+                editor.PutString("IdentityStore", JsonConvert.SerializeObject(identityStore));
+                List<TrustedKey> AllTrustedKeys = identityStore.GetAllTrustedKeys();
+                editor.PutString("AllTrustedKeys", JsonConvert.SerializeObject(AllTrustedKeys));
+                editor.Apply();
+
                 Models.Message message = new Models.Message();
                 message.MessageID = 4;
-                message.MessageReceiverRegisID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
+                message.MessageReceiverRegisID = SelectedFriend.RegisterationID;
                 message.MessageSenderRegisID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
-                message.MessageText = messageText.Text;
+                message.MessageText = JsonConvert.SerializeObject(cipherMessage.serialize());
                 message.MessageTimestamp = DateTime.Now;
 
                 //  call SendMessage() to send the 
@@ -64,27 +106,11 @@ namespace AndroidChatApp.Activities
                 adapter.NotifyDataSetInvalidated();
                 listView.SetSelection(adapter.Count);
 
-            };
-
-            //new Thread(delegate () {
-            //    RefreshMessagesAsync();
-            //}).Start();            
+            };           
         }
 
-        //private void RefreshMessagesAsync()
-        //{
-        //    while (true)
-        //    {
-        //        Thread.Sleep(5000);
-        //        TheirMessages = GetMessages(sharedPref);
-        //        //if (TheirMessages != null)
-        //        //{
-        //        //    adapter.NotifyDataSetChanged();
-        //        //}
-        //    }
-        //}
-
-        public Models.Message[] GetMessages(ISharedPreferences sharedPref)
+        public Models.Message[] GetMessages(ISharedPreferences sharedPref, User SelectedFriend, SessionStore sessionStore, 
+            PreKeyStore preKeyStore, SignedPreKeyStore signedPreKeyStore, IdentityKeyStore identityStore, SignalProtocolAddress SelectedFriendAddress)
         {
             // send the server the user name
             // server side does the selection and return the messages and store it in a message array.
@@ -94,8 +120,12 @@ namespace AndroidChatApp.Activities
 
             //Login_Request has two properties:username and password
             Login_Request myLogin_Request = new Login_Request();
+            Models.Message recieveMessage = new Models.Message();
+
             //get the login username from previow login page.
-            myLogin_Request.RegistrationID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
+            recieveMessage.MessageReceiverRegisID = Convert.ToUInt32(sharedPref.GetString("RegistrationId", string.Empty));
+            recieveMessage.MessageSenderRegisID = SelectedFriend.RegisterationID;
+            myLogin_Request.message = recieveMessage;
             UserID = myLogin_Request.RegistrationID;
 
 
@@ -114,8 +144,12 @@ namespace AndroidChatApp.Activities
             {
                 if (!r.IsError)
                 {
+                    SessionCipher sessionCipher = new SessionCipher(sessionStore, preKeyStore, signedPreKeyStore, identityStore, SelectedFriendAddress);
+                    byte[] decipherMessage = sessionCipher.decrypt(new PreKeySignalMessage((JsonConvert.DeserializeObject<byte[]>(r.MessageText))));
+                    string checkMessage = Encoding.UTF8.GetString(decipherMessage);
+
                     return TheirMessages = new Models.Message[] {new Models.Message { MessageID = r.MessageID, MessageSenderRegisID = r.MessageSenderRegisID,
-                        MessageReceiverRegisID = r.MessageReceiverRegisID, MessageText = r.MessageText, MessageTimestamp = r.MessageTimestamp} };
+                        MessageReceiverRegisID = r.MessageReceiverRegisID, MessageText = checkMessage, MessageTimestamp = r.MessageTimestamp} };
                 }
                 else
                 {
@@ -126,6 +160,63 @@ namespace AndroidChatApp.Activities
                     dialogBuilder.Show();
                     return null;
 
+                }
+            }
+            else
+            {
+                if (!sessionStore.ContainsSession(SelectedFriendAddress))
+                {
+                    // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.
+                    SessionBuilder sessionBuilder = new SessionBuilder(sessionStore, preKeyStore, signedPreKeyStore,
+                                                                       identityStore, SelectedFriendAddress);
+                    RetrievedPreKey preKeyPublic = RetrieveSelectedFriendPublicPreKey(SelectedFriend);
+                    IdentityKey SelectedFriendSignedPreKey = new IdentityKey(JsonConvert.DeserializeObject<byte[]>(SelectedFriend.SignedPreKey), 0);
+                    PreKeyBundle retrievedPreKey = new PreKeyBundle(SelectedFriend.RegisterationID, 1, preKeyPublic.PrekeyID, preKeyPublic.PublicPreKey.getPublicKey()
+                        , SelectedFriend.SignedPreKeyID, SelectedFriendSignedPreKey.getPublicKey(), JsonConvert.DeserializeObject<byte[]>(SelectedFriend.SignedPreKeySignature)
+                        ,new IdentityKey(JsonConvert.DeserializeObject<byte[]>(SelectedFriend.IdentityKey), 0));
+                    // Build a session with a PreKey retrieved from the server.
+                    sessionBuilder.process(retrievedPreKey);
+                }
+                return null;
+            }
+        }
+
+        private RetrievedPreKey RetrieveSelectedFriendPublicPreKey(User SelectedFriend)
+        {
+            //Send the SignedPreKey to the server and get the corresponding PreKey response
+            string apiUrl = "https://ycandgap.me/api_server2.php";
+            string apiMethod = "getPreKey";
+
+            Prekey_Request retrievePreKey_Request = new Prekey_Request();
+            //get the user SignedPreKey.
+            ISharedPreferences sharedprefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            retrievePreKey_Request.PublicSignedPreKeyID = SelectedFriend.SignedPreKeyID;
+
+            // make http post request
+            string response = Http.Post(apiUrl, new NameValueCollection()
+                {
+                    { "api_method", apiMethod                                    },
+                    { "api_data",   JsonConvert.SerializeObject(retrievePreKey_Request) }
+                });
+
+            // decode json string to dto object
+            API_Response3 r = JsonConvert.DeserializeObject<API_Response3>(response);
+
+            // check response
+            if (r != null)
+            {
+                if (!r.IsError)
+                {
+                    return new RetrievedPreKey() { PublicPreKey = new IdentityKey(JsonConvert.DeserializeObject<byte[]>(r.PreKey),0), PrekeyID = Convert.ToUInt32(r.PreKeyID) };
+                }
+                else
+                {
+                    //if login fails, pop up an alert message. Wrong username or password or a new user
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                    dialogBuilder.SetMessage(r.ErrorMessage);
+                    //dialogBuilder.SetPositiveButton("Ok", null);
+                    dialogBuilder.Show();
+                    return null;
                 }
             }
             else
@@ -266,6 +357,20 @@ namespace AndroidChatApp.Activities
                 get { return theirMessages[position]; }
             }
         }
+    }
+
+    internal class RetrievedPreKey
+    {
+        public uint PrekeyID { get; set; }
+        public IdentityKey PublicPreKey { get; set; }
+    }
+
+    internal class API_Response3
+    {
+        public bool IsError { get; set; }
+        public string ErrorMessage { get; set; }
+        public string PreKeyID { get; set; }
+        public string PreKey { get; set; }
     }
 
     internal class API_Response2

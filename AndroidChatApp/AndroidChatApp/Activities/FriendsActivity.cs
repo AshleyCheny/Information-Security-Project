@@ -18,10 +18,10 @@ using Android.Preferences;
 namespace AndroidChatApp.Activities
 {
     [Activity(Label = "Friends")]
-    public class ConversationActivity : Activity
+    public class FriendsActivity : Activity
     {
-        public Conversation[] Conversations = new Conversation[] { };
-        public Conversation Conversation = new Conversation();
+        public User[] Friends = new User[] { };
+        public User Friend = new User();
         //    public Models.Message[] Messages { get; private set; }
         //    public string Text { get; set; }
         ListView listView;
@@ -31,17 +31,23 @@ namespace AndroidChatApp.Activities
         {
             // Get the conversations from the server
             base.OnCreate(bundle);
-            Conversations = GetConversations();
+
+            Friends = GetFriends();
             // Set our view from the "FriendsList" layout resource
             SetContentView(Resource.Layout.Conversation);
             listView = FindViewById<ListView>(Resource.Id.FriendsList);
             //***display FriendsListItem in ListView using Adapter
-            listView.Adapter = adapter = new Adapter(this, Conversations);
+            listView.Adapter = adapter = new Adapter(this, Friends);
 
             // Set the click event
             listView.ItemClick += (sender, e) =>
             {
-                Conversation = adapter[e.Position];
+                Friend = adapter[e.Position];
+
+                ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                ISharedPreferencesEditor editor = sharedPref.Edit();
+                editor.PutString("SelectedFriend", JsonConvert.SerializeObject(Friend));
+                editor.Apply();
 
                 StartActivity(typeof(MessagesActivity));
             };
@@ -52,43 +58,14 @@ namespace AndroidChatApp.Activities
 
         }
 
-        //    // This code will set up the adapter and reload our list of FriendsList when the activity appears on screen
-        //    protected override void OnResume()
-        //    {
-        //        // Call OnResume method
-        //        base.OnResume();
-        //        try
-        //        {
-        //            // Get the conversations in the server
-        //            GetConversations();
-
-        //            adapter.NotifyDataSetInvalidated();
-        //        }
-        //        catch (Exception exc)
-        //        {
-        //            DisplayError(exc);
-        //        }
-        //    }
-
-        //    private void DisplayError(Exception exc)
-        //    {
-        //        string error = exc.Message;
-        //        new AlertDialog.Builder(this)
-        //            .SetTitle(2130968578)
-        //            .SetMessage(error)
-        //            .SetPositiveButton(Android.Resource.String.Ok,
-        //            (IDialogInterfaceOnClickListener)null)
-        //            .Show();
-        //    }
-
         // Retrieve a list of conversations 
-        private Conversation[] GetConversations()
+        private User[] GetFriends()
         {
             // send the server the user name
-            // server side does the selection and return the other users' names/id and store it in a Coversation array.
+            // server side does the selection and return the other users' names/id and store it in a user array.
             //Send the login username and password to the server and get response
             string apiUrl = "https://ycandgap.me/api_server2.php";
-            string apiMethod = "getConversations";
+            string apiMethod = "getFriends";
 
             //Login_Request has two properties:username and password
             Login_Request myLogin_Request = new Login_Request();
@@ -112,10 +89,31 @@ namespace AndroidChatApp.Activities
             {
                 if (!r.IsError)
                 {
-                    MessagesActivity m = new MessagesActivity();
-                    string lastmessage = (m.GetMessages(sharedPref) != null) ? m.GetMessages(sharedPref).FirstOrDefault().MessageText : string.Empty;
-                    return Conversations = new Conversation[] {new Conversation { ConversationID=r.ConversationID, FriendName=r.SenderName,
-                        FriendRegisID =r.ReceiverReigsID, LastMessage = lastmessage, SenderRegisID = r.SenderRegisID} };
+                    if (r.Array != null)
+                    {
+                        MessagesActivity m = new MessagesActivity();
+                        List<User> friends = new List<User>();
+                        string lastmessage = string.Empty;
+                        //(m.GetMessages(sharedPref) != null) ? m.GetMessages(sharedPref).FirstOrDefault().MessageText : string.Empty;
+                        foreach (Friend friend in r.Array)
+                        {
+                            friends.Add(new User()
+                            {
+                                IdentityKey = friend.IdentityKey,
+                                LastMessage = lastmessage,
+                                RegisterationID = Convert.ToUInt32(friend.RegistrationID),
+                                SignedPreKeyID = Convert.ToUInt32(friend.SignedPreKeyID),
+                                SignedPreKeySignature = friend.SignedPreKeySignature,
+                                SignedPreKey = friend.SignedPreKey,
+                                Username = friend.Username
+                            });
+                        }
+                        return friends.ToArray();
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -135,18 +133,18 @@ namespace AndroidChatApp.Activities
         // Create a subclasse of BaseAdapter<Conversation>: Adapter
         //Connect database and UI
         // adapter holds data from database and send the data to dapter view
-        public class Adapter : BaseAdapter<Conversation>
+        public class Adapter : BaseAdapter<User>
         {
-            Conversation[] conversations;
+            User[] users;
             Activity context;
             //        readonly LayoutInflater inflater;
 
             // We passed in a Context parameter (our activity) so that we can pull out the LayoutInflater. 
             // This class enables us to load XML layout resources and inflate them into a view object.
-            public Adapter(Activity context, Conversation[] conversations) : base()
+            public Adapter(Activity context, User[] users) : base()
             {
                 this.context = context;
-                this.conversations = conversations;
+                this.users = users;
                 //inflater = (LayoutInflater)context.GetSystemService(Context.LayoutInflaterService);
             }
             //  Implement GetItemId method. 
@@ -166,21 +164,21 @@ namespace AndroidChatApp.Activities
                     convertView = context.LayoutInflater.Inflate(Resource.Layout.ConversationListItem, null);
                 }
 
-                convertView.FindViewById<TextView>(Resource.Id.conversationUsername).Text = conversations[position].FriendName;
-                convertView.FindViewById<TextView>(Resource.Id.conversationLastMessage).Text = conversations[position].LastMessage;
+                convertView.FindViewById<TextView>(Resource.Id.conversationUsername).Text = users[position].Username;
+                convertView.FindViewById<TextView>(Resource.Id.conversationLastMessage).Text = users[position].LastMessage;
                 return convertView;
             }
 
             // We overrode Count to return the number of conversations. 
             public override int Count
             {
-                get { return conversations == null ? 0 : conversations.Length; }
+                get { return users == null ? 0 : users.Length; }
             }
 
             //  We implemented an indexer to return a Conversation object for a position. 
-            public override Conversation this[int position]
+            public override User this[int position]
             {
-                get { return conversations[position]; }
+                get { return users[position]; }
             }
         }
 }
@@ -189,10 +187,16 @@ namespace AndroidChatApp.Activities
     {
         public bool IsError { get; set; }
         public string ErrorMessage { get; set; }
-        public int ConversationID { get; set; }
-        public uint SenderRegisID { get; set; }
-        public uint ReceiverReigsID { get; set; }
-        public string SenderName { get; set; }
-        public string LastMessage { get; set; }
+        public Friend[] Array { get; set; }
+    }
+
+    public class Friend
+    {
+        public string Username { get; set; }
+        public string RegistrationID { get; set; }
+        public string IdentityKey { get; set; }
+        public string SignedPreKey { get; set; }
+        public string SignedPreKeyID { get; set; }
+        public string SignedPreKeySignature { get; set; }
     }
 }
