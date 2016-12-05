@@ -145,7 +145,11 @@ namespace AndroidChatApp.Activities
                 if (!r.IsError)
                 {
                     SessionCipher sessionCipher = new SessionCipher(sessionStore, preKeyStore, signedPreKeyStore, identityStore, SelectedFriendAddress);
-                    byte[] decipherMessage = sessionCipher.decrypt(new PreKeySignalMessage((JsonConvert.DeserializeObject<byte[]>(r.MessageText))));
+                    byte[] decipherMessage;
+                    if (!sessionStore.ContainsSession(SelectedFriendAddress))
+                        decipherMessage = sessionCipher.decrypt(new PreKeySignalMessage((JsonConvert.DeserializeObject<byte[]>(r.MessageText))));
+                    else
+                        decipherMessage = sessionCipher.decrypt(new SignalMessage((JsonConvert.DeserializeObject<byte[]>(r.MessageText))));
                     string checkMessage = Encoding.UTF8.GetString(decipherMessage);
 
                     return TheirMessages = new Models.Message[] {new Models.Message { MessageID = r.MessageID, MessageSenderRegisID = r.MessageSenderRegisID,
