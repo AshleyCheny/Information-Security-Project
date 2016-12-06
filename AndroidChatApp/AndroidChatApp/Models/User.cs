@@ -32,5 +32,6 @@ namespace AndroidChatApp.Models
         public string LastMessage { get; set; }
         public uint SignedPreKeyID { get; set; }
         public string SignedPreKeySignature { get; set; }
+        public List<Message> SelectedUserMessages = new List<Message>();
     }
 }

@@ -47,6 +47,8 @@ namespace AndroidChatApp.Activities
                 ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                 ISharedPreferencesEditor editor = sharedPref.Edit();
                 editor.PutString("SelectedFriend", JsonConvert.SerializeObject(Friend));
+                List<Models.Message> messages = new List<Models.Message>();
+                editor.PutString("SelectedFriendMessageList", JsonConvert.SerializeObject(messages));
                 editor.Apply();
 
                 StartActivity(typeof(MessagesActivity));

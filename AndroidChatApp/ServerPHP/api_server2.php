@@ -235,7 +235,7 @@ function getMessage($api_data)
 
     //operate query and save the results in the variable $sql
     //$sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$LoginRegisID' AND `Sent`=FALSE ORDER BY `MessageTimestamp` DESC LIMIT 1";
-    $sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$messageReceiverRegisID' AND `MessageSenderRegisID`='$messageSenderRegisID' ORDER BY `MessageTimestamp` DESC";
+    $sql = "SELECT * FROM `Message` WHERE `MessageReceiverRegisID`='$messageReceiverRegisID' AND `MessageSenderRegisID`='$messageSenderRegisID' AND `Sent`=FALSE ORDER BY `MessageTimestamp` DESC";
     $result = mysql_query($sql);
     $sql1 = "UPDATE `Message` SET `Sent`=TRUE WHERE `MessageReceiverRegisID`='$messageReceiverRegisID' ORDER BY `MessageTimestamp` DESC";
     mysql_query($sql1);

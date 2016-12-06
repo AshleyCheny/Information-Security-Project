@@ -41,6 +41,12 @@ namespace AndroidChatApp.Activities
             // Getting saved data
             ISharedPreferences sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
             User SelectedFriend = JsonConvert.DeserializeObject<User>(sharedPref.GetString("SelectedFriend", string.Empty));
+            List<Models.Message> SelectedFriendMessageList = new List<Models.Message>();
+            SelectedFriendMessageList = JsonConvert.DeserializeObject<List<Models.Message>>(sharedPref.GetString("SelectedFriendMessageList", string.Empty));
+            foreach (Models.Message m in SelectedFriendMessageList)
+            {
+                SelectedFriend.SelectedUserMessages.Add(m);
+            }
             InMemorySessionStore sessionStore = JsonConvert.DeserializeObject<InMemorySessionStore>(sharedPref.GetString("SessionStore", string.Empty));
             var allSessions = JsonConvert.DeserializeObject<List<Session>>(sharedPref.GetString("AllSessions", string.Empty));
             foreach (Session item in allSessions)
@@ -79,10 +85,25 @@ namespace AndroidChatApp.Activities
             {
                 SessionCipher sessionCipher = new SessionCipher(sessionStore, preKeyStore, signedPreKeyStore, identityStore, SelectedFriendAddress);
                 CiphertextMessage cipherMessage = sessionCipher.encrypt(Encoding.UTF8.GetBytes(messageText.Text));
+                SelectedFriend.SelectedUserMessages.Add(new Models.Message()
+                {
+                    MessageID = 1,
+                    MessageReceiverRegisID = SelectedFriend.RegisterationID,
+                    MessageSenderRegisID = RegistrationID,
+                    MessageText = messageText.Text,
+                    MessageTimestamp = DateTime.Now
+                });
 
                 // Save stores in local Database
                 ISharedPreferences sharedprefs = PreferenceManager.GetDefaultSharedPreferences(this);
                 ISharedPreferencesEditor editor = sharedprefs.Edit();
+                SelectedFriendMessageList.Clear();
+                foreach (Models.Message m in SelectedFriend.SelectedUserMessages)
+                {
+                    SelectedFriendMessageList.Add(m);
+                }
+                editor.PutString("SelectedFriendMessageList", JsonConvert.SerializeObject(SelectedFriendMessageList));
+                editor.PutString("SelectedFriend", JsonConvert.SerializeObject(SelectedFriend));
                 editor.PutString("PreKeyStore", JsonConvert.SerializeObject(preKeyStore));
                 editor.PutString("SignedPreKeyStore", JsonConvert.SerializeObject(signedPreKeyStore));
                 List<Session> AllSessions = sessionStore.GetAllSessions();
@@ -142,7 +163,7 @@ namespace AndroidChatApp.Activities
             // check response
             if (r != null)
             {
-                if (!r.IsError)
+                if (!r.IsError && !string.IsNullOrEmpty(r.MessageText))
                 {
                     SessionCipher sessionCipher = new SessionCipher(sessionStore, preKeyStore, signedPreKeyStore, identityStore, SelectedFriendAddress);
                     byte[] decipherMessage;
@@ -152,14 +173,25 @@ namespace AndroidChatApp.Activities
                         decipherMessage = sessionCipher.decrypt(new SignalMessage((JsonConvert.DeserializeObject<byte[]>(r.MessageText))));
                     string checkMessage = Encoding.UTF8.GetString(decipherMessage);
 
-                    return TheirMessages = new Models.Message[] {new Models.Message { MessageID = r.MessageID, MessageSenderRegisID = r.MessageSenderRegisID,
-                        MessageReceiverRegisID = r.MessageReceiverRegisID, MessageText = checkMessage, MessageTimestamp = r.MessageTimestamp} };
+                    SelectedFriend.SelectedUserMessages.Add(new Models.Message
+                    {
+                        MessageID = r.MessageID,
+                        MessageSenderRegisID = r.MessageSenderRegisID,
+                        MessageReceiverRegisID = r.MessageReceiverRegisID,
+                        MessageText = checkMessage,
+                        MessageTimestamp = r.MessageTimestamp
+                    });
+
+                    return SelectedFriend.SelectedUserMessages.ToArray();
                 }
                 else
                 {
                     //if login fails, pop up an alert message. Wrong username or password or a new user
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-                    dialogBuilder.SetMessage(r.ErrorMessage);
+                    if (!string.IsNullOrEmpty(r.ErrorMessage))
+                        dialogBuilder.SetMessage(r.ErrorMessage);
+                    else
+                        dialogBuilder.SetMessage("No new messages");
                     //dialogBuilder.SetPositiveButton("Ok", null);
                     dialogBuilder.Show();
                     return null;
