@@ -1,8 +1,13 @@
-﻿namespace Signal_Protocol.kdf
+﻿/**
+ * Copyright (C) 2014-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+namespace libsignal.kdf
 {
-    internal class HKDFv3 : HKDF
+    public class HKDFv3 : HKDF
     {
-        override protected int getIterationStartOffset()
+        protected override int getIterationStartOffset()
         {
             return 1;
         }

@@ -1,18 +1,26 @@
-﻿namespace Signal_Protocol.ecc
+﻿/**
+ * Copyright (C) 2013-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+namespace libsignal.ecc
 {
-    internal class DjbECPrivateKey : ECPrivateKey
+    public class DjbECPrivateKey : ECPrivateKey
     {
-        private byte[] privateKey;
+
+        private readonly byte[] privateKey;
 
         public DjbECPrivateKey(byte[] privateKey)
         {
             this.privateKey = privateKey;
         }
 
+
         public byte[] serialize()
         {
             return privateKey;
         }
+
 
         public int getType()
         {

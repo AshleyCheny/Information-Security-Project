@@ -1,42 +1,22 @@
-﻿using Signal_Protocol.util;
-using System;
+﻿/**
+ * Copyright (C) 2013-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
 using System.Linq;
-using System.Numerics;
+using libsignal.util;
 
-namespace Signal_Protocol.ecc
+namespace libsignal.ecc
 {
-    internal class DjbECPublicKey : ECPublicKey
+    public class DjbECPublicKey : ECPublicKey
     {
-        private byte[] publicKey;
+        private readonly byte[] publicKey;
 
         public DjbECPublicKey(byte[] publicKey)
         {
             this.publicKey = publicKey;
         }
 
-        public int CompareTo(object another)
-        {
-            return new BigInteger(publicKey).CompareTo(new BigInteger(((DjbECPublicKey)another).publicKey));
-        }
-
-        public int getType()
-        {
-            return Curve.DJB_TYPE;
-        }
-
-        public bool equals(object other)
-        {
-            if (other == null) return false;
-            if (!(other is DjbECPublicKey)) return false;
-
-            DjbECPublicKey that = (DjbECPublicKey)other;
-            return Enumerable.SequenceEqual(this.publicKey, that.publicKey);
-        }
-
-        public int hashCode()
-        {
-            return string.Join(",", publicKey).GetHashCode();
-        }
 
         public byte[] serialize()
         {
@@ -44,9 +24,41 @@ namespace Signal_Protocol.ecc
             return ByteUtil.combine(type, publicKey);
         }
 
+
+        public int getType()
+        {
+            return Curve.DJB_TYPE;
+        }
+
+
+        public override bool Equals(object other)
+        {
+            if (other == null) return false;
+            if (!(other is DjbECPublicKey)) return false;
+
+            DjbECPublicKey that = (DjbECPublicKey)other;
+            return Enumerable.SequenceEqual(publicKey, that.publicKey);
+        }
+
+
+        public override int GetHashCode()
+        {
+            return string.Join(",", publicKey).GetHashCode();
+        }
+
+
+        public int CompareTo(object another)
+        {
+            byte[] theirs = ((DjbECPublicKey)another).publicKey;
+            string theirString = string.Join(",", theirs.Select(y => y.ToString()));
+            string ourString = string.Join(",", publicKey.Select(y => y.ToString()));
+            return ourString.CompareTo(theirString);
+        }
+
         public byte[] getPublicKey()
         {
             return publicKey;
         }
+
     }
 }

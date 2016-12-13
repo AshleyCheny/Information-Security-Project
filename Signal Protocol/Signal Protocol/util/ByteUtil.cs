@@ -1,14 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/**
+ * Copyright (C) 2014-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+ using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Signal_Protocol.util
+namespace libsignal.util
 {
-    class ByteUtil
+    public class ByteUtil
     {
+        /// <summary>
+        /// This is a timing attack resistant implementation of MessageDigest.isEqual(). According to
+        /// https://codahale.com/a-lesson-in-timing-attacks/ , this helper method in the Java
+        /// environment is vulnerable to timing attacks.
+        /// </summary>
+        public static bool isEqual(byte[] first, byte[] second)
+        {
+            if (first.Length != second.Length)
+            {
+                return false;
+            }
+
+            int result = 0;
+            for (int i = 0; i < first.Length; i++)
+            {
+                result |= first[i] ^ second[i];
+            }
+            return result == 0;
+        }
+
         public static byte[] combine(params byte[][] elements)
         {
             try
@@ -273,5 +294,6 @@ namespace Signal_Protocol.util
                     ((bytes[offset + 6] & 0xffL) << 8) |
                     ((bytes[offset + 7] & 0xffL));
         }
+
     }
 }

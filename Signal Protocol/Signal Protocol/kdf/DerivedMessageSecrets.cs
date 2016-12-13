@@ -1,14 +1,15 @@
-﻿using Signal_Protocol.util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/**
+ * Copyright (C) 2014-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+using libsignal.util;
 
-namespace Signal_Protocol.kdf
+namespace libsignal.kdf
 {
-    class DerivedMessageSecrets
+    public class DerivedMessageSecrets
     {
+
         public static readonly int SIZE = 80;
         private static readonly int CIPHER_KEY_LENGTH = 32;
         private static readonly int MAC_KEY_LENGTH = 32;
@@ -20,18 +21,11 @@ namespace Signal_Protocol.kdf
 
         public DerivedMessageSecrets(byte[] okm)
         {
-            try
-            {
-                byte[][] keys = ByteUtil.split(okm, CIPHER_KEY_LENGTH, MAC_KEY_LENGTH, IV_LENGTH);
+            byte[][] keys = ByteUtil.split(okm, CIPHER_KEY_LENGTH, MAC_KEY_LENGTH, IV_LENGTH);
 
-                this.cipherKey = keys[0];
-                this.macKey = keys[1];
-                this.iv = keys[2];
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            cipherKey = keys[0];
+            macKey = keys[1];
+            iv = keys[2];
         }
 
         public byte[] getCipherKey()

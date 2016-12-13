@@ -1,22 +1,24 @@
-﻿using Signal_Protocol.util;
+﻿/**
+ * Copyright (C) 2014-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+using libsignal.util;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Signal_Protocol.kdf
+namespace libsignal.kdf
 {
     public abstract class HKDF
     {
+
         private static readonly int HASH_OUTPUT_SIZE = 32;
 
-        public static HKDF createFor(int messageVersion)
+        public static HKDF createFor(uint messageVersion)
         {
             switch (messageVersion)
             {
-                case 2: return new HKDFv2();
+                case 2: return new HKDFv3();
                 case 3: return new HKDFv3();
                 default: throw new Exception("Unknown version: " + messageVersion);
             }
@@ -50,23 +52,23 @@ namespace Signal_Protocol.kdf
         {
             try
             {
-                int iterations = (int)Math.Ceiling((double)outputSize / (double)HASH_OUTPUT_SIZE);
+                int iterations = (int)Math.Ceiling(outputSize / (double)HASH_OUTPUT_SIZE);
                 byte[] mixin = new byte[0];
                 MemoryStream results = new MemoryStream();
                 int remainingBytes = outputSize;
 
                 for (int i = getIterationStartOffset(); i < iterations + getIterationStartOffset(); i++)
                 {
-                    MemoryStream mac = new MemoryStream();
-                    mac.Write(mixin, 0, mixin.Length);
+                    MemoryStream msg = new MemoryStream();
+                    msg.Write(mixin, 0, mixin.Length);
                     if (info != null)
                     {
-                        mac.Write(info, 0, info.Length);
+                        msg.Write(info, 0, info.Length);
                     }
-                    byte[] ibytes = BitConverter.GetBytes(i);
-                    mac.Write(ibytes, 0, 1);
+                    byte[] ib = BitConverter.GetBytes(i);
+                    msg.Write(ib, 0, 1);
 
-                    byte[] stepResult = Sign.sha256sum(prk, mac.ToArray());
+                    byte[] stepResult = Sign.sha256sum(prk, msg.ToArray());
                     int stepSize = Math.Min(remainingBytes, stepResult.Length);
 
                     results.Write(stepResult, 0, stepSize);
@@ -84,5 +86,6 @@ namespace Signal_Protocol.kdf
         }
 
         protected abstract int getIterationStartOffset();
+
     }
 }

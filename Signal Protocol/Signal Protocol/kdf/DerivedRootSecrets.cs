@@ -1,13 +1,13 @@
-﻿using Signal_Protocol.util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/**
+ * Copyright (C) 2014-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+using libsignal.util;
 
-namespace Signal_Protocol.kdf
+namespace libsignal.kdf
 {
-    class DerivedRootSecrets
+    public class DerivedRootSecrets
     {
         public static readonly int SIZE = 64;
 
@@ -17,8 +17,8 @@ namespace Signal_Protocol.kdf
         public DerivedRootSecrets(byte[] okm)
         {
             byte[][] keys = ByteUtil.split(okm, 32, 32);
-            this.rootKey = keys[0];
-            this.chainKey = keys[1];
+            rootKey = keys[0];
+            chainKey = keys[1];
         }
 
         public byte[] getRootKey()

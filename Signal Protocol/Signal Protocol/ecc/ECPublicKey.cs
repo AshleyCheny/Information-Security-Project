@@ -1,11 +1,15 @@
-﻿using System;
+﻿/**
+ * Copyright (C) 2013-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
 
-namespace Signal_Protocol.ecc
+using System;
+
+namespace libsignal.ecc
 {
     public interface ECPublicKey : IComparable
     {
-        //public static int KEY_SIZE = 33;
-
         byte[] serialize();
 
         int getType();

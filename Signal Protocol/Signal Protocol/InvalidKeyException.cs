@@ -1,25 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿/**
+ * Copyright (C) 2014-2016 Open Whisper Systems
+ *
+ * Licensed according to the LICENSE file in this repository.
+ */
+ using System;
 
-namespace Signal_Protocol
+namespace libsignal
 {
     public class InvalidKeyException : Exception
     {
+
         public InvalidKeyException() { }
 
-        public InvalidKeyException(String detailMessage) : base(detailMessage)
+        public InvalidKeyException(string detailMessage)
+            : base(detailMessage)
         {
 
         }
 
-        public InvalidKeyException(Exception throwable) : base(throwable.Message)
+        public InvalidKeyException(Exception exception)
+            : base(exception.Message)
         {
 
         }
 
-        public InvalidKeyException(String detailMessage, Exception throwable) : base(detailMessage, throwable)
+        public InvalidKeyException(string detailMessage, Exception exception)
+            : base(detailMessage, exception)
         {
 
         }
